@@ -1,0 +1,38 @@
+ws list in 032 | | |
+ws2 omit list in 032 | min 0 | |
+day_medium or mo tu we th fr sa su | |
+day_longer or mon tue wed thu fri sat sun | |
+day_long or monday tuesday wednesday thursday friday saturday sunday | |
+day_name or day_long day_longer day_medium | |
+month_short or jan feb mar apr may jun jul aug sep oct nov dec | |
+month_long or january february march april may june july august september october november december | |
+month_name or month_long month_short | |
+number list in 0 to 9 | | |
+other or today tomorrow yesterday fortnight week | |
+modifier or next last | |
+modifier_post or week fortnight | |
+period or |minute| |hour| |day| week |month| |year| | |
+relative and modifier ws period | |
+minute and in 0 to 5 | in 0 to 9 | | |
+hour or and in 0 to 1 | in 0 to 9 | | and 2 in 0 to 4 | | | |
+time and hour opt in :. | | minute | |
+day or and 0 in 1 to 9 | | and in 1 to 2 | in 0 to 9 | | and 3 in 0 to 1 | | in 1 to 9 | | |
+month or and 0 in 1 to 9 | | and 1 in 0 to 2 | | in 1 to 9 | month_name | |
+year or and 9 in 5 to 9 | | and |199| in 5 to 9 | | and 0 in 0 to 9 | | and 1 in 0 to 5 | | and |200| in 0 to 9 | | and |201| in 0 to 5 | | | |
+separator list in 032 . / \- | | |
+date_long and opt and day_name ws | | day separator month separator year | |
+unix_date and year separator month separator day | |
+date_short1 and day separator month | |
+date_short2 and month separator day | |
+date_short3 and month separator year | |
+date_short4 and modifier ws day_name | |
+date_short5 and modifier ws month_name | |
+date_short6 and day_name ws modifier_post | |
+date or date_short6 date_long unix_date date_short1 date_short3 date_short2 relative date_short4 date_short5 other | |
+date_time1 and date ws time | |
+date_time2 and time ws date | |
+day_time1 and day_name ws time | |
+day_time2 and time ws day_name | |
+full_date or date_time1 date_time2 day_time1 day_time2 date day_name time year day month  | |
+full_date_string and ws2 full_date ws2 eos | |
+

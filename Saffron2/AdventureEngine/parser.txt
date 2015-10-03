@@ -1,0 +1,3 @@
+space omit list 032 | |
+noun_phrase and ext article | space ext adjective | space ext noun | | |
+sentence and ext verb | space ext preposition | space noun_phrase | | |

@@ -1,0 +1,95 @@
+FORT%=0TO3STEP3
+P%=&7F00
+[OPTT%
+.getfile%
+JSR &B545
+RTS
+SEI
+PHA
+LDA #&64
+STA &FE10
+LDA #&17
+STA &FE08
+LDA #&15
+STA &FE08
+PLA
+STA &FE09
+.waita%
+LDA &FE08
+AND #&02
+BEQ waita%
+STX &70
+STY &71
+LDY #0
+LDA (&70),Y
+STA &72
+INY
+LDA (&70),Y
+STA &73
+LDY #0
+.nextfilenamechar%
+.wait1%
+JSR waitforsend%
+LDA (&72),Y
+STA &FE09
+INY
+CMP #&0D
+BNE nextfilenamechar%
+
+LDY #&02
+.nextblockbyte%
+JSR waitforsend%
+LDA (&70),Y
+STA &FE09
+INY
+CPY #&12
+BNE nextblockbyte%
+JSR waitforsend%
+LDA #&77
+STA &FE08
+LDX #255
+.again%
+DEX
+BNE again%
+JSR loadmem%
+CLI
+RTS
+.loadmem%
+LDA #&15
+STA &FE08
+JSR waitfordata%
+LDA &FE09
+STA start%+1
+JSR waitfordata%
+LDA &FE09
+STA start%+2
+JSR waitfordata%
+LDX &FE09
+JSR waitfordata%
+LDY &FE09
+.transfer%
+JSR waitfordata%
+LDA &FE09
+.start%
+STA &FFFF,X
+INX
+BNE transfer%
+INC start%+2
+INY
+BNE transfer%
+RTS
+.waitfordata%
+LDA &FE08
+AND #&01
+BEQ waitfordata%
+RTS
+.waitforsend%
+LDA &FE08
+AND #&02
+BEQ waitforsend%
+RTS
+]
+NEXT
+?&212=getfile% MOD 256
+?&213=getfile% DIV 256
+*FX2

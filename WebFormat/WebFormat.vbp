@@ -1,0 +1,37 @@
+Type=Exe
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#C:\WINDOWS\system32\stdole2.tlb#OLE Automation
+Reference=*\G{45EEFEF0-18A2-4AB0-8EAA-39AA25F2FA40}#1.0#0#C:\PDLClasses.dll#PDLClasses
+Reference=*\G{520D9F1D-0F33-4E96-80F8-4494F0DE8038}#1.0#0#C:\PDLCompiler.dll#PDLCompiler
+Module=Formatting; Formatting.bas
+Startup="Sub Main"
+HelpFile=""
+Title="WebFormat"
+ExeName32="WebFormat.exe"
+Command32=""
+Name="WebFormat"
+HelpContextID="0"
+CompatibleMode="0"
+MajorVer=1
+MinorVer=0
+RevisionVer=43
+AutoIncrementVer=1
+ServerSupportFiles=0
+VersionCompanyName="CCB"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=-1
+BoundsCheck=-1
+OverflowCheck=-1
+FlPointCheck=-1
+FDIVCheck=-1
+UnroundedFP=-1
+StartMode=0
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+
+[MS Transaction Server]
+AutoRefresh=1

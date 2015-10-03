@@ -1,0 +1,6 @@
+context{torch}|
+player{location{the clearing}|inventory{torch}}|
+the clearing{description{You are in a forest clearing covered in grass. You can make out a small muddy path through the trees.}|directions{forest path}}|
+forest path{description{You are on a muddy forest path. Through the trees is a clearing, the path continues deeper into the forest.}|directions{clearing|deeper forest path}}|
+torch{verbs{take}|attributes{weight{200}}}|
+cat

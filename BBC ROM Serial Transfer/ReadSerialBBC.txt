@@ -1,0 +1,55 @@
+MODE0
+DIM Q% 150
+FORT%=0TO2STEP2
+P%=Q%
+[OPTT%
+.entry%
+SEI
+LDA #&64
+STA &FE10
+LDA #&03
+STA &FE08
+LDA #&15
+STA &FE08
+.load_start_lo%
+LDA &FE08
+LSR A
+BCC load_start_lo%
+LDA &FE09
+STA start%+1
+.load_start_hi%
+LDA &FE08
+LSR A
+BCC load_start_hi%
+LDA &FE09
+STA start%+2
+.load_length_lo%
+LDA &FE08
+LSR A
+BCC load_length_lo%
+LDX &FE09
+.load_length_hi%
+LDA &FE08
+LSR A
+BCC load_length_hi%
+LDY &FE09
+BEQ exit%
+.transfer%
+LDA &FE08
+LSR A
+BCC transfer%
+LDA &FE09
+.start%
+STA &FFFF,X
+INX
+BNE transfer%
+INC start%+2
+INY
+BNE transfer%
+JMP load_start_lo%
+.exit%
+CLI
+RTS
+]
+NEXT
+CALL entry%

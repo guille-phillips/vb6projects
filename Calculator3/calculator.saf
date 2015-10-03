@@ -1,0 +1,39 @@
+ws omit list 032 min 0 | |
+digits list in 0 to 9 | | |
+radixnumber and list in 0 to 9 A to F | | R digits | |
+fraction and . digits | |
+exponent and E opt in +- | | digits | |
+number and opt - | digits opt fraction | opt exponent | | |
+minsec and digits : digits opt fraction | | |
+hourminsec and digits : digits : digits opt fraction | | |
+time or hourminsec minsec | |
+range and opt level0 | omit .. opt level0 | | |
+bit_range list or range level0 | del omit ; | |
+function or sin cos tan cot csc sec exp and log opt digits | | and base digits | rad deg int frac sqr atn asn acs gam dms and fix digits | len if | |
+function2 or bit | |
+loop_operator and or |loop show | opt in + - * / \& | | | |
+loop_params and omit ( ws level0 ws omit , ws level0 ws omit ) | |
+loop and loop_operator loop_params ws level0 ws omit : opt variable | | |
+variable and in A to Z a to z | list in A to Z a to z 0 to 9 | min 0 | | |
+function_variable_assign and variable opt and omit ( list variable del and ws , ws | | omit ) | | | |
+function_variable_call and variable opt and omit ( list level0 del and ws , ws | | omit )  | | | |
+level0 or and omit { list level0 del omit and ws ; ws | | omit } | level1 | |
+level1 or keyword assignment definition level2 | |
+level2 list level3 del and ws or <> >= <= == < > | ws | | |
+level3 list level4 del and ws or |and |or xor mod | ws | | |
+level4 list level5 del and ws in +-& | ws | | |
+level5 list level6 del and ws in */\ | ws | | |
+level6 list level7 del and ws ^ ws | | |
+level7 or loop factorial percent time radixnumber number function_bit_expression functionexpressionX constant function_variable_call unaryexpression bracketexpression | |
+level7dummy or fail fail fail fail fail number fail fail fail function_variable_call fail bracketexpression | |
+factorial and level7dummy omit ! | |
+percent and number omit % | |
+functionexpressionX and function ws omit ( ws list level0 del omit and ws , ws | | omit ) ws | |
+function_bit_expression and function2 ws omit ( ws level0 ws omit , ws bit_range ws omit ) ws | |
+constant or pi e | |
+unaryexpression and in + - | level0 | |
+bracketexpression and ( level0 ) | |
+assignment and variable ws = ws level0 | |
+definition and function_variable_assign ws := ws list skip | until eos | | |
+keyword or |list help | |
+

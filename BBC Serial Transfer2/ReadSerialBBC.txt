@@ -1,0 +1,73 @@
+MODE1
+FORT%=0TO2STEP2
+P%=&7F00
+[OPTT%
+.temp%
+EQUB &00
+.vector%
+LDX #0
+TXS
+LDX #0
+LDY #0
+LDA #0
+BIT temp%
+NOP
+NOP
+NOP
+.address%
+JMP &FFFF
+LDA address%+1
+JSR &B545
+LDA address%+2
+JSR &B545
+RTS
+JMP &FFFF
+.entry%
+SEI
+LDA #&64
+STA &FE10
+LDA #&03
+STA &FE08
+LDA #&15
+STA &FE08
+.load_start_lo%
+LDA &FE08
+AND #&01
+BEQ load_start_lo%
+LDA &FE09
+STA start%+1
+.load_start_hi%
+LDA &FE08
+AND #&01
+BEQ load_start_hi%
+LDA &FE09
+STA start%+2
+.load_length_lo%
+LDA &FE08
+AND #&01
+BEQ load_length_lo%
+LDX &FE09
+.load_length_hi%
+LDA &FE08
+AND #&01
+BEQ load_length_hi%
+LDY &FE09
+BEQ vector%
+.transfer%
+LDA &FE08
+AND #&01
+BEQ transfer%
+LDA &FE09
+.start%
+STA &FFFF,X
+INX
+BNE transfer%
+INC start%+2
+INY
+BNE transfer%
+JMP load_start_lo%
+]
+NEXT
+?&FE00=12
+?&FE01=0
+CALL entry%

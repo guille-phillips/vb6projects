@@ -1,0 +1,26 @@
+set_var and omit $ in a to z | list in a  to  z 0 to 9 | min 0 | omit opt ; | | |
+parallel_var and omit $  set_var | |
+digits list in 0 to 9 | | |
+range  and omit $ digits opt and omit : digits | | omit opt ; | | |
+reference  and parallel_var omit : set | |
+escape  and omit 124 in $:,;{}@~#||^% | | |
+other  in 000 to 255 not $:,;{}@~#' | |
+element and opt omit # | list or set assignment set_var reference parallel_var range escape other | min 0 | | |
+assignment  and set_var omit : set | |
+indexed and set_var { set } | |
+set  and opt or @~ ~@ @ ~ | | omit { list element del omit , min 0 | omit } | |
+
+text list or ## #t #n #b and omit # list in 0 to 9 | min 3 max 3 | | skip | | until eos | |
+number list in 0 to 9 | | |
+not_number list skip | until non omit or eos in 0 to 9 | | | |
+string list or number not_number | until omit eos min 0 | |
+
+element2 list or escape2 skip | | until non omit or { } space2 | | |
+escape2 or ||{ ||} and 124 032 | | |
+space2 list in 032 009 010 013 | | |
+set2 and element2 omit { list element2 | omit } | |
+
+all_lower list in sen a to z _ 0 to 9 | | |
+all_mixed list in a to z _ 0 to 9 | | |
+camel_text list or all_lower all_mixed skip | | until eos | |
+

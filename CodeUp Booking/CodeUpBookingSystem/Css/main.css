@@ -1,0 +1,134 @@
+﻿
+*
+{
+  font-family: Tahoma, Arial, Helvetica; 
+}
+
+body
+{
+  margin: 0;
+  font-size: 80%;
+  background-color: #dadada;
+}
+
+h1
+{
+  font-size: 1.3em; 
+  color: #0c9164;
+}
+
+img
+{
+  border: none;
+}
+
+td
+{
+  vertical-align: top; 
+}
+
+/* Size and positioning of the main page layout */
+/* The Main div of the page that holds the entire contents. 
+  User to size and center the page */
+#PageWrapper
+{
+  width: 970px;
+  margin-left: auto;
+  margin-right: auto;
+  border-right: 3px solid #456F08;
+  background-color: White;
+  background-image: url(../Images/Background.jpg);
+  background-repeat: repeat-y;
+}
+
+#Header
+{
+    border-bottom: 3px solid #aeb4b2;
+}
+
+#MainMenu
+{
+  width: 160px;
+  float: left;
+  padding-top: 20px;
+  background-color: #456F08;
+}
+
+a, a:visited
+{
+    color: #0c9164;
+}
+
+#MainMenu a, #MainMenu a:visited
+{
+  padding-left: 20px;
+  color: White;
+}
+
+#ManagementMenu a.Selected, #ManagementMenu a:visited.Selected
+{
+  font-weight: bold;
+}
+
+#MainMenu a.Selected, #MainMenu a:visited.Selected
+{
+  font-weight: bold;
+  background-image: url(../Images/SelectedMenu.jpg);
+  background-repeat: no-repeat;
+}
+
+#MainMenu ul, #ManagementMenu ul
+{
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+#MainMenu ul li, #ManagementMenu ul li
+{
+  margin-left: 10px;
+}
+
+#ManagementMenu
+{
+  vertical-align: top; 
+  width: 160px;
+}
+
+#MainContent
+{
+    float: left;
+  padding-left: 10px;
+  padding-top: 20px;
+  padding-bottom: 30px;
+  width: 800px;
+  background-color: White;
+}
+
+/* Small footer that appears at the bottom of every page. Holds the copyright notice */
+#Footer
+{
+  width: 970px;
+  margin-left: auto;
+  margin-right: auto;
+  background-image: url(../Images/Background.jpg);
+  background-repeat: repeat-y;
+  background-color: White;
+  clear: both;
+  text-align: center;
+  padding-top: 30px;
+  padding-bottom: 10px;
+  color: Gray;
+}
+
+#Footer a
+{
+  text-decoration: none;
+  font-size: 0.9em;
+  color: Gray;
+}
+
+#Footer a:hover
+{
+  text-decoration: underline;
+}

@@ -1,0 +1,990 @@
+VERSION 5.00
+Object = "{58C43137-923D-11D4-8C3A-BAE08A9B6642}#1.2#0"; "SmallListView.ocx"
+Begin VB.UserDocument UserDocument1 
+   ClientHeight    =   1005
+   ClientLeft      =   0
+   ClientTop       =   0
+   ClientWidth     =   1350
+   FillColor       =   &H00004000&
+   HScrollSmallChange=   225
+   ScaleHeight     =   1005
+   ScaleWidth      =   1350
+   VScrollSmallChange=   225
+   Begin SmallListView.SListView lstComments 
+      Height          =   975
+      Left            =   0
+      TabIndex        =   0
+      Top             =   0
+      Width           =   1335
+      _ExtentX        =   2355
+      _ExtentY        =   1720
+   End
+   Begin VB.Menu mnuCodeSummary 
+      Caption         =   "CodeSummary"
+      Visible         =   0   'False
+      Begin VB.Menu mnuProcedures 
+         Caption         =   "&Procedures"
+         Checked         =   -1  'True
+      End
+      Begin VB.Menu mnuProperties 
+         Caption         =   "P&roperties"
+         Checked         =   -1  'True
+      End
+      Begin VB.Menu mnuVariables 
+         Caption         =   "&Variables"
+         Checked         =   -1  'True
+      End
+      Begin VB.Menu mnuConstants 
+         Caption         =   "&Constants"
+         Checked         =   -1  'True
+      End
+      Begin VB.Menu mnuControls 
+         Caption         =   "&Controls"
+      End
+      Begin VB.Menu sep1 
+         Caption         =   "-"
+      End
+      Begin VB.Menu mnuPrivate 
+         Caption         =   "Private"
+      End
+      Begin VB.Menu mnuPublic 
+         Caption         =   "Public"
+      End
+      Begin VB.Menu sep2 
+         Caption         =   "-"
+      End
+      Begin VB.Menu mnuOther 
+         Caption         =   "Other..."
+         Begin VB.Menu mnuStart 
+            Caption         =   "Goto Start"
+         End
+         Begin VB.Menu mnuEnd 
+            Caption         =   "Goto End"
+         End
+         Begin VB.Menu mnuHighlight 
+            Caption         =   "Highlight"
+         End
+         Begin VB.Menu mnusep3 
+            Caption         =   "-"
+         End
+         Begin VB.Menu mnuAlphabetic 
+            Caption         =   "Alphabetic"
+         End
+         Begin VB.Menu mnuSep4 
+            Caption         =   "-"
+         End
+         Begin VB.Menu mnuSingleClickSelect 
+            Caption         =   "&Single Click Select"
+         End
+         Begin VB.Menu mnuMultiColumn 
+            Caption         =   "&Multi Column"
+         End
+         Begin VB.Menu mnuNames 
+            Caption         =   "&Names Only"
+            Checked         =   -1  'True
+         End
+         Begin VB.Menu mnuSep5 
+            Caption         =   "-"
+         End
+         Begin VB.Menu mnuPrint 
+            Caption         =   "&Print"
+         End
+      End
+   End
+End
+Attribute VB_Name = "UserDocument1"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = True
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = True
+Option Explicit
+
+Private Declare Function FindWindow Lib "USER32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+Private Declare Function SendMessage Lib "USER32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+Private Declare Function GetWindow Lib "USER32" (ByVal hWnd As Long, ByVal wCmd As Long) As Long
+Private Declare Function GetNextWindow Lib "USER32" Alias "GetWindow" (ByVal hWnd As Long, ByVal wFlag As Long) As Long
+Private Declare Function GetWindowText Lib "USER32" Alias "GetWindowTextA" (ByVal hWnd As Long, ByVal lpString As String, ByVal cch As Long) As Long
+Private Declare Function GetClassName Lib "USER32" Alias "GetClassNameA" (ByVal hWnd As Long, ByVal lpClassName As String, ByVal nMaxCount As Long) As Long
+
+' GetWindow() Constants
+Private Const GW_HWNDFIRST = 0
+Private Const GW_HWNDLAST = 1
+Private Const GW_HWNDNEXT = 2
+Private Const GW_HWNDPREV = 3
+Private Const GW_OWNER = 4
+Private Const GW_CHILD = 5
+Private Const GW_MAX = 5
+
+Private Const LVM_FIRST = &H1000
+Private Const LVM_SETCOLUMNWIDTH = (LVM_FIRST + 30)
+Private Const LVSCW_AUTOSIZE = -1
+Private Const LVSCW_AUTOSIZE_USEHEADER = -2
+
+Private ListWidth As Single
+Private ListHeight As Single
+Private colTotal As Integer
+
+Private myCodeModule As CodeModule
+Private SortType As SortTypes
+Private ShiftOn As Boolean
+Private CtrlOn As Boolean
+
+Public VBInstance As VBIDE.VBE
+Public ParentWindow As Object
+
+Private Enum SortTypes
+    Program
+    Alphabetic
+End Enum
+
+Private Type Entry
+    TheText As String
+    TheKey As String
+    TheColour As Long
+    TheBold As Boolean
+    TheID As String
+    TheType As Long
+End Type
+
+Private Entries() As Entry
+Private EntryCount As Long
+Private CodePositions As New Dictionary
+Private bNotClicked As Boolean
+
+Private WithEvents ControlEvent As VBIDE.SelectedVBControlsEvents
+Attribute ControlEvent.VB_VarHelpID = -1
+
+Private Sub ControlEvent_ItemAdded(ByVal VBControl As VBIDE.VBControl)
+    If VBControl.InSelection Then
+    End If
+End Sub
+
+Private Sub ControlEvent_ItemRemoved(ByVal VBControl As VBIDE.VBControl)
+    If VBControl.InSelection Then
+    End If
+End Sub
+
+
+
+'' / Sort or unsort the column
+'Private Sub lstComments_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
+'    Dim ThisText As String
+'
+'    SortType = (SortType + 1) Mod 2
+'    DisplaySortType
+'    SaveSetting "ActiveProcedure", "DisplayOptions", "SortType", SortType
+'
+'    If lstComments.SelectedItem Is Nothing Then
+'        DisplayList myCodeModule
+'    Else
+'        ThisText = lstComments.SelectedItem.Text
+'        DisplayList myCodeModule, , ThisText
+'    End If
+'
+'End Sub
+
+Private Sub lstComments_Click()
+    If mnuSingleClickSelect.Checked Then
+        ShowMethod
+    End If
+End Sub
+
+Private Sub lstComments_DblClick()
+    If Not mnuSingleClickSelect.Checked Then
+        ShowMethod
+    End If
+End Sub
+
+Private Sub ShowMethod()
+    Dim ThisLine As Long
+    Dim TotalLines As Long
+    Dim ThisKey As String
+    Dim Name As String
+    Dim MainHWnd As Long
+    Dim ChildHWnd As Long
+    Dim WindowText As String * 255
+    Dim ClassName As String * 255
+    Dim W As String
+    Dim MemberID As String
+    
+    Const VBClassName = "wndclass_desked_gsk"
+
+    If lstComments.Highlight = 0 Then
+        Exit Sub
+    End If
+    
+    Dim SelectedLine As Long
+    Dim TopOfLine As Long
+    Dim SomeText As String
+    Dim dummy As Long
+    Dim iIndex As Long
+
+    If Left(lstComments.SelectedItem.Tag, 1) = "c" Then
+        myCodeModule.Parent.DesignerWindow.Visible = True
+        myCodeModule.Parent.Designer.VBControls(Val(Mid(lstComments.SelectedItem.Tag, 2, 4))).InSelection = Not myCodeModule.Parent.Designer.VBControls(Val(Mid(lstComments.SelectedItem.Tag, 2, 4))).InSelection
+        Exit Sub
+    End If
+    
+    Name = lstComments.SelectedItem.Text
+    DisplayList myCodeModule, , Name
+
+    ' Save the old position
+    myCodeModule.CodePane.GetSelection SelectedLine, dummy, dummy, dummy
+    TopOfLine = myCodeModule.CodePane.TopLine
+    For iIndex = 0 To EntryCount - 1
+        ThisLine = Val(Mid(Entries(iIndex).TheKey, 6, 4))
+        TotalLines = Val(Mid(Entries(iIndex).TheKey, 10, 4))
+        If (SelectedLine - ThisLine) < TotalLines And (SelectedLine - ThisLine) >= 0 Then
+            If CodePositions.Exists(Entries(iIndex).TheID) Then
+                CodePositions.Remove (Entries(iIndex).TheID)
+            End If
+            CodePositions.Add Entries(iIndex).TheID, Format(SelectedLine - ThisLine, "0000") & Format(TopOfLine, "0000")
+            SomeText = Entries(iIndex).TheID
+        End If
+    Next
+
+    
+    MemberID = Entries(Val(Mid(lstComments.SelectedItem.Key, 2))).TheID
+    If Not ShiftOn And Not CtrlOn Then
+        If SomeText = MemberID Then
+            CodePositions.Remove (MemberID)
+        Else
+            ' Look for a pre-existing position
+            If CodePositions.Exists(MemberID) Then
+                ThisLine = Val(Mid(lstComments.SelectedItem.Tag, 6, 4)) + Val(Left(CodePositions(MemberID), 4))
+                myCodeModule.CodePane.SetSelection ThisLine, 1, ThisLine, 2
+                myCodeModule.CodePane.TopLine = Val(Mid(CodePositions(MemberID), 5))
+                myCodeModule.CodePane.Window.SetFocus
+                'CodePositions.Remove (lstComments.SelectedItem.Text)
+                GoTo focusback
+            End If
+        End If
+    End If
+
+    If bNotClicked Then
+        Exit Sub
+    End If
+    
+    ' Open the window if not already opened
+    Set VBInstance.ActiveCodePane = myCodeModule.CodePane
+    
+    With myCodeModule.CodePane
+        On Error Resume Next
+        ThisKey = lstComments.SelectedItem.Tag
+        
+        If ShiftOn Then
+            ThisLine = Val(Mid(ThisKey, 6, 4))
+            TotalLines = Val(Mid(ThisKey, 10, 4))
+            .SetSelection ThisLine, 1, ThisLine + TotalLines, 1
+            .TopLine = ThisLine
+        ElseIf CtrlOn Then
+            ThisLine = Val(Mid(ThisKey, 6, 4))
+            TotalLines = Val(Mid(ThisKey, 10, 4))
+            .SetSelection ThisLine + TotalLines - 1, 1, ThisLine + TotalLines - 1, 2
+        Else
+            ThisKey = lstComments.SelectedItem.Tag
+            ThisLine = Val(Mid(ThisKey, 2, 4))
+            .SetSelection ThisLine, 1, ThisLine, 2
+            .TopLine = ThisLine
+        End If
+
+        ShiftOn = False
+    End With
+    
+focusback:
+    
+    ' Highlight code window again!
+    MainHWnd = FindWindow(VBClassName, VBInstance.MainWindow.Caption) ' Problems with window names over 98 chars
+    ChildHWnd = GetWindow(MainHWnd, GW_CHILD)
+    
+    Do
+        GetClassName ChildHWnd, ClassName, 255
+        If Left(ClassName, 9) <> "MDIClient" Then
+            ChildHWnd = GetWindow(ChildHWnd, GW_HWNDNEXT)
+        End If
+    Loop Until Left(ClassName, 9) = "MDIClient" Or Asc(Mid(ClassName, 1, 1)) = 0
+    If Asc(Mid(ClassName, 1, 1)) = 0 Then
+        Exit Sub
+    End If
+    ChildHWnd = GetWindow(ChildHWnd, GW_CHILD)
+    W = myCodeModule.CodePane.Window.Caption
+    Do
+        GetWindowText ChildHWnd, WindowText, 255
+        If Left(WindowText, Len(W)) <> W Then
+            ChildHWnd = GetWindow(ChildHWnd, GW_HWNDNEXT)
+        End If
+    Loop Until Left(WindowText, Len(W)) = W
+    
+    SendMessage ChildHWnd, &H1043, 0, 0
+        
+End Sub
+
+Public Sub UpdateSelection()
+    Dim dummy As Long
+    Dim lStartLine As Long
+    Dim sProcName As String
+    Dim iEntryCount As Integer
+    Dim iStart As Long
+    Dim iLength As Long
+    
+    Static OldStartLine As Long
+    Static OldDeclarationCount As Long
+    
+    If myCodeModule Is Nothing Then
+        Exit Sub
+    End If
+    
+'    If myCodeModule.Members.Count <> OldDeclarationCount Then
+'        DisplayList myCodeModule
+'        OldDeclarationCount = myCodeModule.Members.Count
+'    End If
+    
+    myCodeModule.CodePane.GetSelection lStartLine, dummy, dummy, dummy
+    If lStartLine = OldStartLine Then
+        Exit Sub
+    End If
+    
+    ' Highlight
+    For iEntryCount = 0 To EntryCount - 1
+        iStart = Val(Mid(Entries(iEntryCount).TheKey, 6, 4))
+        iLength = Val(Mid(Entries(iEntryCount).TheKey, 10, 4))
+        If lStartLine >= iStart And lStartLine <= (iStart + iLength - 1) Then
+            lstComments.Highlight = iEntryCount + 1
+        End If
+    Next
+End Sub
+
+
+
+Private Sub lstComments_MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single)
+
+    If Button = vbLeftButton Then
+        ShiftOn = (Shift And 1) = 1
+        CtrlOn = (Shift And 2) = 2
+    ElseIf Button = vbRightButton Then
+        UserDocument.PopupMenu mnuCodeSummary
+    End If
+End Sub
+
+
+Private Sub lstComments_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
+    'Dim s As ListItem
+    If Button = vbLeftButton Then
+        If Not lstComments.SelectedItem Is Nothing Then
+            If Val(Mid(lstComments.SelectedItem.Tag, 10, 4)) <> 0 Or Left(lstComments.SelectedItem.Tag, 1) = "c" Then
+                If Not lstComments.HitTest(x, y) Is lstComments.SelectedItem Then
+                    lstComments.OLEDrag
+                End If
+            End If
+        End If
+    End If
+End Sub
+
+Private Sub lstComments_OLEDragDrop(Data As DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, y As Single)
+    ' Fetch the Source start line
+    Dim TargetItem As Object
+    Dim SourceLines As String
+
+    Dim SourceKey As String
+    Dim SourceStart As Long
+    Dim SourceBody As Long
+    Dim SourceLength As Long
+    Dim SourceText As String
+
+    Dim TargetKey As String
+    Dim TargetStart As Long
+    Dim TargetBody As Long
+    Dim TargetLength As Long
+
+    If lstComments.SelectedItem Is Nothing Then
+        Beep
+        Exit Sub
+    End If
+
+    Set TargetItem = lstComments.HitTest(x, y + 100)
+
+    If TargetItem Is Nothing Then
+        While lstComments.HitTest(x, y + 100) Is Nothing And y > 0
+            y = y - 25
+        Wend
+
+        If y > 0 Then
+'            If lstComments.HitTest(x, y + 100).Index < (lstComments.ListItems.Count - 1) Then
+'                Set TargetItem = lstComments.ListItems(lstComments.HitTest(x, y + 100).Index + 1)
+'            End If
+        End If
+    End If
+
+    SourceKey = lstComments.SelectedItem.Tag
+    SourceStart = Val(Mid(SourceKey, 6, 4))
+    SourceBody = Val(Mid(SourceKey, 2, 4))
+    SourceLength = Val(Mid(SourceKey, 10, 4))
+    SourceText = lstComments.SelectedItem.Text
+
+    If Not TargetItem Is Nothing Then
+
+        If TargetItem = lstComments.SelectedItem Then
+            Exit Sub
+        End If
+
+        TargetKey = TargetItem.Tag
+        TargetStart = Val(Mid(TargetKey, 6, 4))
+        TargetBody = Val(Mid(TargetKey, 2, 4))
+        TargetLength = Val(Mid(TargetKey, 10, 4))
+
+        If TargetKey = "a000100010000" Or Left(TargetKey, 1) = "c" Then
+            Beep
+            Exit Sub
+        End If
+
+        If SourceStart < TargetStart Then
+            TargetStart = TargetStart - SourceLength
+        End If
+
+        SourceLines = myCodeModule.Lines(SourceStart, SourceLength)
+        myCodeModule.DeleteLines SourceStart, SourceLength
+        myCodeModule.InsertLines TargetStart, SourceLines
+
+    Else
+        SourceLines = myCodeModule.Lines(SourceStart, SourceLength)
+        myCodeModule.DeleteLines SourceStart, SourceLength
+        myCodeModule.InsertLines myCodeModule.CountOfLines + 1, SourceLines
+    End If
+
+    DisplayList myCodeModule, , SourceText
+    ShowMethod
+End Sub
+
+Private Sub lstComments_OLEDragOver(Data As DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, y As Single, State As Integer)
+    If SortType <> SortTypes.Program Then
+        Effect = vbDropEffectNone
+    End If
+End Sub
+
+Private Sub lstComments_OLEStartDrag(Data As DataObject, AllowedEffects As Long)
+    AllowedEffects = vbDropEffectMove Or vbDropEffectMove
+    Data.SetData lstComments.SelectedItem.Text, vbCFText
+End Sub
+
+
+Private Sub mnuAlphabetic_Click()
+    Dim ThisKey As String
+    
+    SortType = (SortType + 1) Mod 2
+    DisplaySortType
+    SaveSetting "ActiveProcedure", "DisplayOptions", "SortType", SortType
+
+    If lstComments.SelectedItem Is Nothing Then
+        DisplayList myCodeModule
+    Else
+        ThisKey = lstComments.SelectedItem.Text
+        DisplayList myCodeModule, , ThisKey
+    End If
+        
+End Sub
+
+Private Sub mnuEnd_Click()
+    CtrlOn = True
+    ShiftOn = False
+    ShowMethod
+End Sub
+
+Private Sub mnuHighlight_Click()
+    CtrlOn = False
+    ShiftOn = True
+    ShowMethod
+End Sub
+
+
+Private Sub mnuSingleClickSelect_Click()
+    mnuSingleClickSelect.Checked = Not mnuSingleClickSelect.Checked
+    SaveSetting "ActiveProcedure", "DisplayOptions", "SingleClickSelect", mnuSingleClickSelect.Checked
+End Sub
+
+Private Sub mnuNames_Click()
+    Dim sKey As String
+    
+    mnuNames.Checked = Not mnuNames.Checked
+    SaveSetting "ActiveProcedure", "DisplayOptions", "NamesOnly", mnuNames.Checked
+    
+    If lstComments.SelectedItem Is Nothing Then
+        DisplayList myCodeModule
+    Else
+        sKey = lstComments.SelectedItem.Tag
+        DisplayList myCodeModule, sKey
+    End If
+        
+End Sub
+
+Private Sub mnuPrint_Click()
+    Dim iIndex As Long
+    Dim lPreviousType As Long
+    lPreviousType = -1
+    
+    Printer.Font.Name = "Times New Roman"
+    ' variables/constants/properties/methods
+    For iIndex = 0 To EntryCount - 1
+        If Entries(iIndex).TheType <> lPreviousType Then
+            Printer.FontBold = True
+            Printer.Print
+            Select Case Entries(iIndex).TheType
+                Case vbext_mt_Method
+                    Printer.Print vbCrLf & "(Methods)"
+                Case vbext_mt_Event
+                    Printer.Print vbCrLf & "(Events)"
+                Case vbext_mt_Property
+                    Printer.Print vbCrLf & "(Properties)"
+                Case vbext_mt_Variable
+                    Printer.Print vbCrLf & "(Variables)"
+                Case vbext_mt_Const
+                    Printer.Print vbCrLf & "(Constants)"
+            End Select
+            lPreviousType = Entries(iIndex).TheType
+        End If
+        Printer.Print
+        Printer.FontBold = Entries(iIndex).TheBold
+        If Entries(iIndex).TheBold Then
+            Printer.Font.Name = "Wingdings 3"
+            Printer.Print Chr(132);
+            Printer.Font.Name = "Times New Roman"
+        End If
+        Printer.Print Entries(iIndex).TheText
+    Next
+
+    Printer.EndDoc
+End Sub
+
+Private Sub mnuPrivate_Click()
+    Dim sKey As String
+    
+    mnuPrivate.Checked = Not mnuPrivate.Checked
+    SaveSetting "ActiveProcedure", "DisplayOptions", "Private", mnuPrivate.Checked
+    
+    If lstComments.SelectedItem Is Nothing Then
+        DisplayList myCodeModule
+    Else
+        sKey = lstComments.SelectedItem.Tag
+        DisplayList myCodeModule, sKey
+    End If
+End Sub
+
+Private Sub mnuProcedures_Click()
+    Dim sKey As String
+        
+    mnuProcedures.Checked = Not mnuProcedures.Checked
+    SaveSetting "ActiveProcedure", "DisplayOptions", "Procedures", mnuProcedures.Checked
+    
+    If lstComments.SelectedItem Is Nothing Then
+        DisplayList myCodeModule
+    Else
+        sKey = lstComments.SelectedItem.Tag
+        DisplayList myCodeModule, sKey
+    End If
+End Sub
+
+Private Sub mnuProperties_Click()
+    Dim sKey As String
+        
+    mnuProperties.Checked = Not mnuProperties.Checked
+    SaveSetting "ActiveProcedure", "DisplayOptions", "Properties", mnuProperties.Checked
+    
+    If lstComments.SelectedItem Is Nothing Then
+        DisplayList myCodeModule
+    Else
+        sKey = lstComments.SelectedItem.Tag
+        DisplayList myCodeModule, sKey
+    End If
+End Sub
+
+Private Sub mnuPublic_Click()
+    Dim sKey As String
+    
+    mnuPublic.Checked = Not mnuPublic.Checked
+    SaveSetting "ActiveProcedure", "DisplayOptions", "Public", mnuPublic.Checked
+    
+    If lstComments.SelectedItem Is Nothing Then
+        DisplayList myCodeModule
+    Else
+        sKey = lstComments.SelectedItem.Tag
+        DisplayList myCodeModule, sKey
+    End If
+End Sub
+
+
+
+Private Sub mnuStart_Click()
+    CtrlOn = False
+    ShiftOn = False
+    ShowMethod
+End Sub
+
+Private Sub mnuVariables_Click()
+    Dim sKey As String
+        
+    mnuVariables.Checked = Not mnuVariables.Checked
+    SaveSetting "ActiveProcedure", "DisplayOptions", "Variables", mnuVariables.Checked
+    
+    If lstComments.SelectedItem Is Nothing Then
+        DisplayList myCodeModule
+    Else
+        sKey = lstComments.SelectedItem.Tag
+        DisplayList myCodeModule, sKey
+    End If
+End Sub
+
+Private Sub mnuConstants_Click()
+    Dim sKey As String
+        
+    mnuConstants.Checked = Not mnuConstants.Checked
+    SaveSetting "ActiveProcedure", "DisplayOptions", "Constants", mnuConstants.Checked
+    
+    If lstComments.SelectedItem Is Nothing Then
+        DisplayList myCodeModule
+    Else
+        sKey = lstComments.SelectedItem.Tag
+        DisplayList myCodeModule, sKey
+    End If
+End Sub
+
+Private Sub mnuControls_Click()
+    Dim sKey As String
+    
+    mnuControls.Checked = Not mnuControls.Checked
+    SaveSetting "ActiveProcedure", "DisplayOptions", "Controls", mnuControls.Checked
+    
+    If lstComments.SelectedItem Is Nothing Then
+        DisplayList myCodeModule
+    Else
+        sKey = lstComments.SelectedItem.Tag
+        DisplayList myCodeModule, sKey
+    End If
+End Sub
+    
+Private Sub UserDocument_Initialize()
+    ListWidth = UserDocument.ScaleWidth - lstComments.Width
+    ListHeight = UserDocument.ScaleHeight - lstComments.Height
+End Sub
+
+
+Private Sub UserDocument_Resize()
+    'On Error Resume Next
+    lstComments.Width = UserDocument.ScaleWidth - ListWidth
+    lstComments.Height = UserDocument.ScaleHeight - ListHeight
+   ' lstComments.ColumnHeaders(1).Width = lstComments.Width - 90
+End Sub
+
+Public Sub DisplayList(oCodeModule As CodeModule, Optional sKey As String, Optional sText As String)
+    'Dim a As ListItem
+    Dim vThing As VBIDE.Member
+    Dim sLine As String
+    Dim iLocation As Long
+    Dim iMember As Integer
+    Dim bOkayToDisplay As Boolean
+    Dim iLineOffset As Long
+    Dim iColour As Long
+    Dim iScope As Boolean
+    
+    Dim sDeclaration As String
+    Dim iStart As Long
+    Dim iBody As Long
+    Dim iLength As Long
+    Dim iGetBody As Long
+    Dim iLetBody As Long
+    Dim iSetBody As Long
+    
+    Dim bSorted As Boolean
+    Dim tempMember As Entry
+    'Dim newMember As ListItem
+                
+    Dim sID As String
+                
+    Dim bProcedures As Boolean
+    Dim bProperties As Boolean
+    Dim bVariables As Boolean
+    Dim bConstants As Boolean
+    Dim bPrivate As Boolean
+    Dim bPublic As Boolean
+    Dim sFriend As String
+    
+    bProcedures = mnuProcedures.Checked
+    bProperties = mnuProperties.Checked
+    bVariables = mnuVariables.Checked
+    bConstants = mnuConstants.Checked
+    bPrivate = mnuPrivate.Checked
+    bPublic = mnuPublic.Checked
+    
+    EntryCount = 0
+    
+    Set myCodeModule = oCodeModule
+    
+    ' / Exit if a code module is not selected
+    If oCodeModule Is Nothing Then
+        lstComments.ClearList
+        lstComments.ShowList
+        Exit Sub
+    End If
+    
+    ' / Exit if there are no declarations
+    colTotal = oCodeModule.Members.Count
+    If colTotal = 0 Then
+        lstComments.ClearList
+        lstComments.ShowList
+        Exit Sub
+    End If
+    
+    ' / Go through each declaration
+    For iMember = 1 To colTotal
+        Set vThing = oCodeModule.Members.Item(iMember)
+        
+        ' / Can it be displayed?
+        bOkayToDisplay = True
+        
+        Select Case vThing.Type
+            Case vbext_mt_Method
+                If Not bProcedures Then
+                    bOkayToDisplay = False
+                End If
+                
+            Case vbext_mt_Property
+                If Not bProperties Then
+                    bOkayToDisplay = False
+                End If
+                
+            Case vbext_mt_Event
+                If Not bProcedures Then
+                    bOkayToDisplay = False
+                End If
+            
+            Case vbext_mt_Variable
+                If Not bVariables Then
+                    bOkayToDisplay = False
+                End If
+                
+            Case vbext_mt_Const
+                If Not bConstants Then
+                    bOkayToDisplay = False
+                End If
+                
+            Case Else
+        End Select
+        
+        ' / Display it
+        If bOkayToDisplay Then
+    
+            ' sID = oCodeModule.CodePane.Window.Caption & vThing.Name & vThing.Type- crashes occasionally
+            sID = vThing.Name & vThing.Type
+            iScope = True
+            ' / Which colour needs to be used?
+            iColour = vbBlack
+            Select Case vThing.Type
+                Case vbext_mt_Const
+                    iColour = IIf(iScope, &H6000&, &HC0FFC0)
+                Case vbext_mt_Event
+                    iColour = IIf(iScope, &H4040&, &H4040&)
+                Case vbext_mt_Method
+                    iColour = IIf(iScope, vbBlack, &HC0C0C0)
+                Case vbext_mt_Property
+                    iColour = IIf(iScope, &H80&, &HC0C0FF)
+                Case vbext_mt_Variable
+                    iColour = IIf(iScope, &H800000, &HFFC0C0)
+            End Select
+            
+            iScope = False
+            sFriend = ""
+            Select Case vThing.Scope
+                Case vbext_Private
+                    If bPrivate Then
+                        iScope = True
+                    End If
+                Case vbext_Public
+                    If bPublic Then
+                        iScope = True
+                    End If
+                Case vbext_Friend
+                    sFriend = " (Friend)"
+            End Select
+        End If
+        
+        If bOkayToDisplay Then
+            Select Case vThing.Type
+                Case vbext_mt_Const, vbext_mt_Variable
+                    iStart = vThing.CodeLocation
+                    ' / Format the line to be displayed
+                    If mnuNames.Checked Then
+                        sDeclaration = vThing.Name
+                    Else
+                        sDeclaration = oCodeModule.Lines(iStart, 1)
+                    End If
+                        
+                    AddEntry sDeclaration, iColour, iScope, sID, vThing.Type, iStart, iStart, 1
+                    
+                Case vbext_mt_Property
+                    On Error Resume Next
+    
+                    iGetBody = 0
+                    iLetBody = 0
+                    iSetBody = 0
+                    
+                    ' Need to test whether we have a Get, Let and Set.
+                    iGetBody = oCodeModule.ProcBodyLine(vThing.Name, vbext_pk_Get)
+                    iLetBody = oCodeModule.ProcBodyLine(vThing.Name, vbext_pk_Let)
+                    iSetBody = oCodeModule.ProcBodyLine(vThing.Name, vbext_pk_Set)
+                    
+                    If iGetBody Then
+                        ' / Format the line to be displayed
+                        If mnuNames.Checked Then
+                            sDeclaration = vThing.Name & " (Get)"
+                        Else
+                            sDeclaration = oCodeModule.Lines(iGetBody, 1)
+                        End If
+                            
+                        iStart = oCodeModule.ProcStartLine(vThing.Name, vbext_pk_Get)
+                        iLength = oCodeModule.ProcCountLines(vThing.Name, vbext_pk_Get)
+                        AddEntry sDeclaration, iColour, iScope, sID, vThing.Type, iGetBody, iStart, iLength
+                    End If
+                    
+                    If iLetBody Then
+                        ' / Format the line to be displayed
+                        If mnuNames.Checked Then
+                            sDeclaration = vThing.Name & " (Let)"
+                        Else
+                            sDeclaration = oCodeModule.Lines(iLetBody, 1)
+                        End If
+
+                        iStart = oCodeModule.ProcStartLine(vThing.Name, vbext_pk_Let)
+                        iLength = oCodeModule.ProcCountLines(vThing.Name, vbext_pk_Let)
+                        AddEntry sDeclaration, iColour, iScope, sID, vThing.Type, iLetBody, iStart, iLength
+                    End If
+                    
+                    If iSetBody Then
+                        ' / Format the line to be displayed
+                        If mnuNames.Checked Then
+                            sDeclaration = vThing.Name & " (Set)"
+                        Else
+                            sDeclaration = oCodeModule.Lines(iSetBody, 1)
+                        End If
+
+                        iStart = oCodeModule.ProcStartLine(vThing.Name, vbext_pk_Set)
+                        iLength = oCodeModule.ProcCountLines(vThing.Name, vbext_pk_Set)
+                        AddEntry sDeclaration, iColour, iScope, sID, vThing.Type, iSetBody, iStart, iLength
+                    End If
+                    
+                Case vbext_mt_Event
+                    ' / Format the line to be displayed
+                    If mnuNames.Checked Then
+                        sDeclaration = vThing.Name
+                    Else
+                        sDeclaration = oCodeModule.Lines(iBody, 1)
+                    End If
+
+                    AddEntry sDeclaration, iColour, iScope, sID, vThing.Type, iBody, iBody, 1
+      
+                Case vbext_mt_Method
+                    iBody = oCodeModule.ProcBodyLine(vThing.Name, vbext_pk_Proc)
+                    ' / Format the line to be displayed
+                    If mnuNames.Checked Then
+                        sDeclaration = vThing.Name & sFriend
+                    Else
+                        sDeclaration = oCodeModule.Lines(iBody, 1)
+                    End If
+
+                    iStart = oCodeModule.ProcStartLine(vThing.Name, vbext_pk_Proc)
+                    iLength = oCodeModule.ProcCountLines(vThing.Name, vbext_pk_Proc)
+                    AddEntry sDeclaration, iColour, iScope, sID, vThing.Type, iBody, iStart, iLength
+            End Select
+        End If
+    Next
+    
+    Dim oMControl As Object
+    Dim iControlIndex As Long
+    
+    If mnuControls.Checked Then
+        If Not oCodeModule.Parent.Designer Is Nothing Then
+            For iControlIndex = 1 To oCodeModule.Parent.Designer.VBControls.Count
+                Set oMControl = oCodeModule.Parent.Designer.VBControls(iControlIndex)
+                AddEntry oMControl.Properties("Name"), &H800080, False, "", 0, iControlIndex, 0, 0, "c"
+            Next
+        End If
+    End If
+        
+    If SortType = SortTypes.Alphabetic And EntryCount > 1 Then
+        While Not bSorted
+            bSorted = True
+            For iMember = 0 To EntryCount - 2
+                If Entries(iMember).TheColour < Entries(iMember + 1).TheColour Then
+                    tempMember = Entries(iMember)
+                    Entries(iMember) = Entries(iMember + 1)
+                    Entries(iMember + 1) = tempMember
+                    bSorted = False
+                ElseIf Entries(iMember).TheColour = Entries(iMember + 1).TheColour Then
+                    If UCase(Entries(iMember).TheText) > UCase(Entries(iMember + 1).TheText) Then
+                        tempMember = Entries(iMember)
+                        Entries(iMember) = Entries(iMember + 1)
+                        Entries(iMember + 1) = tempMember
+                        bSorted = False
+                    End If
+                End If
+            Next
+        Wend
+    End If
+
+    lstComments.ClearList
+    For iMember = 0 To EntryCount - 1
+        If bPrivate <> bPublic And Entries(iMember).TheBold Then
+            lstComments.Add Entries(iMember).TheText, Entries(iMember).TheBold, Entries(iMember).TheColour, "a" & CStr(iMember), Entries(iMember).TheKey, True
+        Else
+            lstComments.Add Entries(iMember).TheText, Entries(iMember).TheBold, Entries(iMember).TheColour, "a" & CStr(iMember), Entries(iMember).TheKey, False
+        End If
+        If sKey = Entries(iMember).TheKey Or sText = Entries(iMember).TheText Then
+            lstComments.Highlight = iMember + 1
+        End If
+    Next
+    
+    lstComments.ShowList
+End Sub
+
+Private Function AddEntry(sDeclaration As String, iColour As Long, ByVal iBold As Boolean, sID As String, lType As Long, iBody As Long, iStart As Long, iLength As Long, Optional sKeyLetter As String = "a")
+    ReDim Preserve Entries(EntryCount)
+    Entries(EntryCount).TheColour = iColour
+    Entries(EntryCount).TheKey = sKeyLetter & Format(iBody, "0000") & Format(iStart, "0000") & Format(iLength, "0000")
+    Entries(EntryCount).TheText = sDeclaration
+    Entries(EntryCount).TheBold = iBold
+    Entries(EntryCount).TheID = sID
+    Entries(EntryCount).TheType = lType
+    EntryCount = EntryCount + 1
+End Function
+ 
+Public Sub InitialiseSettings()
+    mnuVariables.Checked = GetSetting("ActiveProcedure", "DisplayOptions", "Variables", False)
+    mnuProcedures.Checked = GetSetting("ActiveProcedure", "DisplayOptions", "Procedures", True)
+    mnuConstants.Checked = GetSetting("ActiveProcedure", "DisplayOptions", "Constants", False)
+    mnuProperties.Checked = GetSetting("ActiveProcedure", "DisplayOptions", "Properties", True)
+    mnuControls.Checked = GetSetting("ActiveProcedure", "DisplayOptions", "Controls", False)
+    mnuNames.Checked = GetSetting("ActiveProcedure", "DisplayOptions", "NamesOnly", True)
+    mnuPrivate.Checked = GetSetting("ActiveProcedure", "DisplayOptions", "Private", False)
+    mnuPublic.Checked = GetSetting("ActiveProcedure", "DisplayOptions", "Public", False)
+    mnuMultiColumn.Checked = GetSetting("ActiveProcedure", "DisplayOptions", "MultiColumn", False)
+    mnuSingleClickSelect.Checked = GetSetting("ActiveProcedure", "DisplayOptions", "SingleClickSelect", True)
+'    If mnuMultiColumn.Checked Then
+'        lstComments.View = lvwList
+'    Else
+'        lstComments.View = lvwReport
+'    End If
+    SortType = GetSetting("ActiveProcedure", "DisplayOptions", "SortType", SortTypes.Program)
+    
+    DisplaySortType
+End Sub
+
+Private Sub DisplaySortType()
+    Select Case SortType
+        Case Program
+            'lstComments.Sorted = False
+            'lstComments.ColumnHeaders(1).Text = ""
+            mnuAlphabetic.Caption = "Alphabetic Sort"
+            
+        Case Alphabetic
+            'lstComments.Sorted = False
+            'lstComments.ColumnHeaders(1).Text = "Alphabetic"
+            mnuAlphabetic.Caption = "Program Order Sort"
+    End Select
+End Sub

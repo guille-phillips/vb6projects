@@ -1,0 +1,29 @@
+﻿.TimesheetCellFree, .TimesheetCellBusy
+{
+   width: 75px;
+   text-align: center;
+   vertical-align: middle;
+   height: 20px;
+   background-color: #f0c5cf;
+}
+
+.TimesheetCellBusy
+{
+   background-color: #cc0033;
+}
+
+.Label
+{
+ font-weight: bold;
+}
+
+p
+{
+  line-height: 150%;
+}
+
+.ErrorMessage
+{
+  color: Red;
+  font-weight: bold; 
+}

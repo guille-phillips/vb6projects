@@ -1,0 +1,15 @@
+Central 	#E6001A	1704166
+District 	#008F4B	4162816
+Circle 	#FFDC00	56575
+Picadilly 	#0E4096	9846798
+Hammersmith & City 	#EC819F	9404655
+victoria  	#0092D5	13996544
+Northen  	#1B1C20	2104347
+Jubilee 	#8D8C90	9473165
+East London 	#F5A300 	41973
+Interchange		0
+Bakerloo 	#B26000	24754
+Metropolitan  	#7A0047	4653178
+x		0
+Waterloo & City 	#87CABD	9292423
+Text 	#0E4096	9846798

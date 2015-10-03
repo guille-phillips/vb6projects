@@ -1,0 +1,64 @@
+ws := [REPEAT ' ' MIN 0];
+digits := {REPEAT IN '0' TO '9'};
+radixnumber := AND {REPEAT IN '0' TO '9', CASE 'A' TO 'F'}, CASE 'R', digits;
+fraction := AND '.', digits;
+exponent := AND CASE 'E', OPTIONAL IN '+-', digits;
+number := {FAIL AND OPTIONAL '-', OPTIONAL digits, OPTIONAL fraction, {OPTIONAL exponent}};
+minsec := AND OPTIONAL '-', digits, ':', digits, OPTIONAL fraction;
+hourminsec := AND OPTIONAL '-', digits, ':', digits, ':', digits, OPTIONAL fraction;
+time := OR hourminsec, minsec;
+range := AND ? level0, ['..'], ? level0;
+bit_range := LIST (OR range, level0), [';'];
+function := OR CASE 'sin',
+                                CASE 'cos',
+                                CASE 'tan',
+                                CASE 'cot',
+                                CASE 'csc',
+                                CASE 'sec',
+                                CASE 'exp',
+                                (AND (CASE 'log'), OPTIONAL digits),
+                                (AND (CASE 'radix'), digits),
+                                CASE 'rad',
+                                CASE 'deg',
+                                CASE 'int',
+                                CASE 'frac',
+                                CASE 'sqr',
+                                CASE 'atn',
+                                CASE 'asn',
+                                CASE 'acs',
+                                CASE 'gam',
+                                CASE 'dms',
+                                CASE 'dm',
+                                (AND (CASE 'fix'), digits),
+                                CASE 'len',
+                                CASE 'if';
+function2 := OR CASE 'bit';
+loop_operator := AND (OR ^'loop', ^'show'), (OPTIONAL IN '+', '-', '*', '/', '\', '&');
+loop_params := AND ['('], ws, level0, ws, [','], ws, level0, ws, [')'];
+loop := AND loop_operator, loop_params, ws, level0, ws, [':'], ? variable;
+function_variable_assign := AND variable, OPTIONAL (AND ['('], (LIST variable, [AND ws, ',', ws]), [')']);
+function_variable_call := AND variable, OPTIONAL (AND ['('], (LIST level0, [AND ws, ',', ws]), [')']);
+level0 := OR (AND ['{'], (LIST level0, [AND ws, ';', ws]), ['}']), level1;
+level1 := OR keyword, assignment, definition, level2;
+level2 := LIST level3, (AND ws, (OR '<>', '>=', '<=', '==', '<', '>'), ws);
+level3 := LIST level4, (AND ws, (OR CASE 'and', CASE 'or', CASE 'xor', CASE 'mod'), ws);
+level4 := LIST level5, (AND ws, (OR '+', '-', '&'), ws);
+level5 := LIST level6, (AND ws, (OR '*', '/', '\'), ws);
+level6 := LIST level7, (AND ws, '^', ws);
+level7 := OR loop, factorial, percent, time, radixnumber, number, function_bit_expression, functionexpressionX, constant, function_variable_call, unaryexpression, bracketexpression;
+level7dummy := OR FAIL, FAIL, FAIL, FAIL, FAIL, number, FAIL, FAIL, FAIL, function_variable_call, FAIL, bracketexpression;
+factorial := AND level7dummy, ['!'];
+percent := AND number, ['%'];
+functionexpressionX := AND function, ws, ['('], ws, (LIST level0, [AND ws, ',', ws]), [')'], ws;
+function_bit_expression := AND function2, ws, ['('], ws, level0, ws, [','], ws, bit_range, ws, [')'], ws;
+constant := OR CASE 'pi', CASE 'e';
+variable := {AND (IN 'A' TO 'Z', 'a' TO 'z'), (REPEAT IN 'A' TO 'Z', 'a' TO 'z', '0' TO '9' MIN 0)};
+unaryexpression := AND (OR '+', '-'), level0;
+bracketexpression := AND '(', level0, ')';
+assignment := AND variable, ws, '=', ws, level0;
+definition := AND function_variable_assign, ws, ':=', ws, REPEAT IN 0 TO 255 UNTIL EOS;
+keyword := CASE 'list';
+
+
+
+

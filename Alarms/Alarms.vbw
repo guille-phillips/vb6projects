@@ -1,0 +1,8 @@
+frmAlarms = 0, 0, 0, 0, C, 22, 29, 889, 485, C
+clsNode = 0, 0, 0, 0, C
+clsKey = 0, 0, 0, 0, C
+clsAlarm = 0, 0, 0, 0, C
+Module1 = 0, 0, 0, 0, C
+Module2 = 0, 0, 0, 0, C
+Module3 = 0, 0, 0, 0, C
+frmEditAlarm = 0, 0, 0, 0, C, 66, 87, 933, 543, C

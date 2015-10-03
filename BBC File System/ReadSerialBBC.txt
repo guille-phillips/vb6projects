@@ -1,0 +1,71 @@
+MODE0
+FORT%=0TO2STEP2
+P%=&7F00
+[OPTT%
+.entry%
+SEI
+JSR init%
+ORA#0
+BNE save%
+.load%
+JSR getword%
+STX addressload%+1
+STY addressload%+2
+JSR getword%
+.transferload%
+LDA &FE08
+LSR A
+BCC transferload%
+LDA &FE09
+.addressload%
+STA &FFFF,X
+INX
+BNE transferload%
+INC addressload%+2
+INY
+BNE transferload%
+CLI
+RTS
+.save%
+JSR getword%
+STX addresssave%+1
+STY addresssave%+2
+JSR getword%
+.transfersave%
+LDA &FE08
+AND #2
+BEQ transfersave%
+.addresssave%
+LDA &FFFF,X
+STA &FE09
+INX
+BNE transfersave%
+INC addresssave%+2
+INY
+BNE transfersave%
+CLI
+RTS
+.init%
+LDX #&64
+STX &FE10
+LDX #&03
+STX &FE08
+LDX #&15
+STX &FE08
+RTS
+.getword%
+JSR getwait%
+LDX &FE09
+JSR getwait%
+LDY &FE09
+RTS
+.getwait%
+LDA &FE08
+LSR A
+BCC getwait%
+RTS
+]
+NEXT
+PRINT ~P%
+A%=0
+CALL entry%

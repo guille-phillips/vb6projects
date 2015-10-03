@@ -1,0 +1,2 @@
+space omit list 032 min 0 | |
+sentence and verb space noun space omit opt . | | | 

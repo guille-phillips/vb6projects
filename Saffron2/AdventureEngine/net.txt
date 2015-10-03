@@ -1,0 +1,5 @@
+pipe omit and || list in 000 to 032 | min 0 | | |
+value list skip | until non omit or || { } eos | | |
+netlist list and value opt sublist | | del pipe min 0 | |
+sublist and omit { netlist omit } | |
+

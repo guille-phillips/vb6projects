@@ -1,0 +1,36 @@
+Type=Exe
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
+Reference=*\G{006D18B3-9CB6-4313-891D-8CE4448CBC73}#1.0#0#..\External\Dictionary.dll#Dictionary
+Reference=*\G{11B6B77D-9DC2-4CD3-A040-75B7B558A5FF}#1.0#0#..\Saffron Classes\SaffronClasses.dll#SaffronClasses
+Reference=*\G{ED8C8BAE-5E18-45A8-8B07-5234CAF26972}#1.0#0#..\Saffron Compiler\SaffronCompiler.dll#SaffronCompiler
+Module=Module1; Module1.bas
+Startup="Sub Main"
+ExeName32="SaffronTest.exe"
+Command32=""
+Name="SaffronTest"
+HelpContextID="0"
+CompatibleMode="0"
+MajorVer=1
+MinorVer=0
+RevisionVer=0
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionCompanyName="CCB"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=0
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+
+[MS Transaction Server]
+AutoRefresh=1

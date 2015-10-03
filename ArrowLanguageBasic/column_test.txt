@@ -1,0 +1,40 @@
+class int [0..10]  
+class word [0..65535]    
+
+function vdu @FFEEh int {
+	param char @A int
+}
+
+function tab int {
+	param column int
+	param row int
+	vdu[31]
+	vdu[column]
+	vdu[row]
+}
+
+function cls int {
+	vdu[12]
+}
+
+function decimal int {
+	param number int
+	new index int
+	_index:3
+	{
+		vdu[number%10+48]
+		_number/10
+		_index-1
+	} while index>0
+}
+
+
+cls[]
+
+new column int
+_column:0
+while column<=9 {
+	tab[column*3,0]
+	decimal[column]
+	_column+1
+}

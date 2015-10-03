@@ -1,0 +1,43 @@
+ws omit list in 032 009 | min 0 | |
+new_line omit and 013 010 | |
+number and opt - | list in 0 to 9 | | | |
+identifier list in a to z A to Z | | |
+range and number ws omit .. ws number | |
+
+range_set list range del omit and ws || ws | | |
+symbol_set and omit / list skip | until  non omit / | omit / | |
+identifier_set list identifier del omit and ws || ws | | |
+member or symbol_set identifier_set range_set | |
+named_member and opt and identifier omit : | | member | |
+index_set and omit [ list named_member del omit and ws , ws | | omit ] | |
+structure_def list or index_set identifier | del ws | |
+declaration and or sen rec str var | ws identifier ws structure_def | |
+for_loop and omit sen for ws structure_def ws omit : ws identifier ws omit { omit } | |
+expression_old or number identifier | |
+index and omit [ list expression del omit and ws , ws | | omit ] | |
+var_index and identifier index | |
+
+simple_range and omit [ ws range ws omit ] | |
+fields and omit [ ws list range del omit and ws , ws | | ws omit ] | |
+class_declaration and omit class ws identifier ws fields | |
+object and or new param | ws identifier ws opt or at_address at_register | | ws or identifier fields | | |
+
+at_address and omit @ list in 0 to 9 a to f A to F | | omit sen h | |
+at_register and omit @ or XY AX AY A X Y | | |
+
+bracket and omit ( ws expression omit ws ) | |
+operator or : + - * / % <> <= >= = < > & || # | |
+expression list or function_call_or_index and opt _ | identifier | number bracket | del and ws operator ws | | |
+
+function_call_or_index and identifier ws omit [ ws list expression del omit and ws , ws | min 0 | ws omit ] | |
+
+if_statement and omit if ws expression ws omit { ws statements omit } ws | |
+while_statement and omit while ws expression ws omit { ws statements omit } ws | |
+until_statement and omit until ws expression ws omit { ws statements omit } ws | |
+do_while_statement and omit { ws statements omit } ws omit while ws expression ws | |
+do_until_statement and omit { ws statements omit } ws omit until ws expression ws | |
+function_statement and omit function ws identifier ws opt at_address | ws opt or identifier fields | | ws omit { ws statements omit } ws | |
+return_statement and omit return ws expression ws | |
+
+statement and ws or return_statement function_statement if_statement while_statement until_statement do_while_statement do_until_statement class_declaration object expression ws | ws | |
+statements list statement del new_line min 0 | |

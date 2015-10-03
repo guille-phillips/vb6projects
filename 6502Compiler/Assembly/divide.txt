@@ -1,0 +1,19 @@
+0C00h
+
+LDX #16d
+LDA 72h
+
+nextbit
+CMP 72h
+BCC nosub
+SBC 72h
+nosub
+ROL 70h
+ROL 71h
+ROL A
+
+DEX
+BPL nextbit
+ROR A
+STA 72h
+RTS

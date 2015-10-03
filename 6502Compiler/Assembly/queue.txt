@@ -1,0 +1,57 @@
+0070h address
+0072h return_code
+0074h block_size_lo
+0075h block_size_hi
+0C00h heap_size		DB 00h
+0C01h heap_even_lo	DB 00h DB 09h
+0C40h heap_even_hi	DB 30h DB 31h
+0C80h heap_odd_lo	DB 00h
+0CC0h heap_odd_hi	DB 30h
+
+7B00h 
+#YX has size to reserve#
+heap_reserve
+STX address
+LDX #00h
+
+check_next
+SEC
+LDA heap_even_lo+1h,X
+SBC heap_odd_lo,X
+STA block_size_lo
+LDA heap_even_hi+1h,X
+SBC heap_odd_hi,X
+STA block_size_hi
+
+TYA
+CMP block_size_hi
+BEQ test_lower
+BMI block_ok
+
+check_next_heap
+LDA #1h
+STA return_code
+RTS
+
+INX
+CPX heap_size
+BCS check_next
+LDA #2h
+STA return_code
+RTS
+
+test_lower
+LDA address
+CMP block_size_lo
+BEQ block_ok
+BMI block_ok
+JMP check_next_heap
+
+block_ok
+LDA #3h
+STA return_code
+RTS
+
+#YX is identifier (address) to free#
+heap_free
+RTS

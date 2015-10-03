@@ -1,0 +1,144 @@
+0070h entry_ptr  DW 0CE0h
+0072h size       DW 0000h
+0074h required   DW 0000h
+0076H free_block DW 0000h
+0078h base       DW 0CE0h
+
+0C00h malloc
+STX required
+STY required+1h
+
+CLC
+LDA required
+ADC #02h
+STA required
+LDA required+1h
+ADC #00h
+STA required+1h
+
+LDY #00h
+LDA base
+STA entry_ptr
+LDA base+1h
+STA entry_ptr+1h
+
+test
+LDA (entry_ptr),Y
+BPL check_error
+
+taken
+AND #7Fh
+CLC
+ADC entry_ptr+1h
+STA entry_ptr+1h
+CLC
+INY
+LDA (entry_ptr),Y
+ADC entry_ptr
+STA entry_ptr
+BCC no_carry
+INC entry_ptr+1h
+
+no_carry
+JMP test
+
+check_error
+INY
+ORA (entry_ptr),Y
+BNE no_error
+RTS
+no_error
+
+free
+LDA entry_ptr
+STA free_block
+LDA entry_ptr+1h
+STA free_block+1h
+
+LDA #00h
+STA size
+STA size+1h
+
+check_end
+LDY #00h
+LDA (entry_ptr),Y
+INY
+ORA (entry_ptr),Y
+BEQ test_size
+
+free_add
+LDY #01h
+LDA (entry_ptr),Y
+ADC size
+STA size
+DEY
+LDA (entry_ptr),Y
+ADC size+1h
+STA size+1h
+
+LDY #01h
+CLC
+LDA (entry_ptr),Y
+ADC entry_ptr
+STA entry_ptr
+DEY
+LDA (entry_ptr),Y
+ADC entry_ptr+1h
+STA entry_ptr+1h
+
+LDY #00h
+LDA (entry_ptr),Y
+BPL check_end
+
+test_size
+LDA size+1h
+CMP required+1h
+BCS ok
+LDA size
+CMP required
+BCS ok
+JMP test
+
+ok
+LDX free_block
+LDA free_block+1h
+PHA
+
+LDY #01h
+LDA required
+STA (free_block),Y
+LDA required+1h
+DEY
+ORA #80h
+STA (free_block),Y
+
+SEC
+LDA size
+SBC required
+STA size
+LDA size+1h
+SBC required+1h
+STA size+1h
+
+CLC
+LDA free_block
+ADC required
+STA free_block
+LDA free_block+1h
+ADC required+1h
+STA free_block+1h
+
+LDY #01h
+LDA size
+STA (free_block),Y
+DEY
+LDA size+1h
+STA (free_block),Y
+
+PLA
+TAY
+
+RTS
+
+0CE0h DW 1E00h
+0CFEh DW 0000h

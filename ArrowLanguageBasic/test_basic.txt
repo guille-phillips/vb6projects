@@ -1,0 +1,59 @@
+class int [0..255]
+class word [0..256]
+class long [0..65536]
+
+function vdu @FFEEh {
+	param char @A int
+}
+
+function decimal int {
+	param number int
+	new index int
+	_index:3
+	{
+		vdu[number%10+48]
+		_number/10
+		_index-1
+	} while index>0
+}
+
+function mult word {
+	param a int
+	param b int
+	return a*b
+}
+
+function div word {
+	param a word
+	param b int
+	return a/b
+}
+
+function mod word {
+	param a word
+	param b int
+	return a%b
+}
+
+function base int {
+	param number word
+	param base int
+	
+	new index int
+	new digit int
+	_index:4
+	{
+		_digit:mod[number,base]
+		vdu[digit+48+mult[digit>=10,7]]
+		_number:div[number,base]
+		_index-1
+	} while index>0
+}
+
+new a@404h word
+new b@408h word
+new c@40Ch word
+
+_b:a%16
+vdu[b+48+mult[b>=10,7]]
+_c:div[a,16]

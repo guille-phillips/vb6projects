@@ -1,0 +1,30 @@
+0000h main_x DB 00h
+0001h main_y DB 00h
+LDX #00h
+0200h
+main
+LDA #64h
+STA main_x
+LDA #00h
+STA main_y
+block1
+LDA main_y
+STA stack,X
+LDA #01h
+CLC
+ADC stack,X
+STA main_y
+LDA main_x
+STA stack,X
+LDA #01h
+SEC
+SBC stack,X
+STA main_x
+BEQ block0_exit
+JMP block1_exit
+block0_exit
+JMP block1
+block1_exit
+RTS
+stack
+FFFCh DW 0200h

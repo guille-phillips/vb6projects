@@ -1,0 +1,340 @@
+0070h 
+reserve_size 			DW 0000h
+reserved_address		DW 0000h
+temp_word			DW 0000h
+
+0080h
+largest_block_index 		DB 00h
+second_largest_block_index 	DB 02h
+return_code			DB 00h
+temp_byte			DB 00h
+
+0C00h heap_size			DB 03h #max 62#
+0C01h heap_block_address_lo	DB 00h DB 00h DB 00h
+0C40h heap_block_address_hi	DB 30h DB 32h DB 33h
+0C80h heap_block_size_lo	DB 00h DB 80h DB 01h
+0CC0h heap_block_size_hi	DB 01h DB 00h DB 01h
+
+3000h DW 0100h
+3200h DW 00FEh
+3104h DW 0010h
+3265h DW 0020h
+
+7800h 
+heap_reserve #YX has size to reserve#
+STX reserve_size
+STY reserve_size+1h
+
+CLC
+LDA reserve_size
+ADC #02h
+STA reserve_size
+BCC j001
+INC reserve_size+1h
+j001
+
+LDX largest_block_index
+SEC
+LDA heap_block_size_lo,X
+SBC reserve_size
+STA temp_word
+LDA heap_block_size_hi,X
+SBC reserve_size+1h
+STA temp_word+1h
+
+BCC size_too_large #reserve size too large#
+
+LDA heap_block_address_lo,X
+STA reserved_address
+LDA heap_block_address_hi,X
+STA reserved_address+1h
+
+LDY #00h
+LDA reserve_size
+STA (reserved_address),Y
+INY
+LDA reserve_size+1h
+STA (reserved_address),Y
+
+LDA temp_word
+STA heap_block_size_lo,X
+LDA temp_word+1h
+STA heap_block_size_hi,X
+
+CLC
+LDA heap_block_address_lo,X
+ADC reserve_size
+STA heap_block_address_lo,X
+LDA heap_block_address_hi,X
+ADC reserve_size+1h
+STA heap_block_address_hi,X
+
+LDY second_largest_block_index
+LDA heap_block_size_lo,X
+CMP heap_block_size_lo,Y
+LDA heap_block_size_hi,X
+SBC heap_block_size_hi,Y
+
+BCS exit_ok
+STY largest_block_index
+
+
+LDX #00h
+LDY #00h
+
+loop001
+CPX largest_block_index
+BEQ j002
+
+LDA heap_block_size_lo,Y
+CMP heap_block_size_lo,X
+LDA heap_block_size_hi,Y
+SBC heap_block_size_hi,X
+BCS j002
+TXA
+TAY
+j002
+INX
+CPX heap_size
+BNE loop001
+
+STY second_largest_block_index
+
+exit_ok
+LDA #00h
+STA return_code
+RTS
+
+size_too_large
+LDA #FFh
+STA return_code
+RTS
+
+
+heap_free #YX has address to free#
+STX reserved_address
+STY reserved_address+1h
+
+LDY #00h
+LDA (reserved_address),Y
+STA reserve_size
+INY
+LDA (reserved_address),Y
+STA reserve_size+1h
+
+LDX #00h
+loop004
+SEC
+LDA heap_block_address_lo,X
+SBC reserved_address
+STA temp_word
+LDA heap_block_address_hi,X
+SBC reserved_address+1h
+STA temp_word+1h
+BCS j005
+INX
+CPX heap_size
+BNE loop004
+
+heap_free_error
+LDA #FFh
+STA return_code
+RTS
+
+j005
+LDA temp_word
+CMP reserve_size
+BNE j006
+LDA temp_word+1h
+SBC reserve_size+1h
+j006
+BEQ j007
+DEY
+
+j007
+
+CPX #00h
+BEQ j010
+
+SEC
+LDA reserved_address
+SBC heap_block_size_lo-1h,X
+STA temp_word
+LDA reserved_address+1h
+SBC heap_block_size_hi-1h,X
+STA temp_word+1h
+SEC
+LDA temp_word
+SBC heap_block_address_lo-1h,X
+STA temp_word
+LDA temp_word+1h
+SBC heap_block_address_hi-1h,X
+STA temp_word+1h
+
+LDA temp_word
+BNE j010
+LDA temp_word+1h
+BNE j010
+INY
+INY
+j010
+
+STY return_code
+
+CPY #01h
+BEQ caseA
+CPY #02h
+BEQ caseB1
+CPY #03h
+BEQ caseA1
+
+caseB
+JSR insert_into_heap
+LDA reserved_address
+STA heap_block_address_lo,X
+LDA reserved_address+1h
+STA heap_block_address_hi,X
+LDA reserve_size
+STA heap_block_size_lo,X
+LDA reserve_size+1h
+STA heap_block_size_hi,X
+JSR adjust_largest_block_size
+RTS
+
+caseA
+CLC
+LDA heap_block_size_lo,X
+ADC reserve_size
+STA heap_block_size_lo,X
+LDA heap_block_size_hi,X
+ADC reserve_size+1h
+STA heap_block_size_hi,X
+LDA reserved_address
+STA heap_block_address_lo,X
+LDA reserved_address+1h
+STA heap_block_address_hi,X
+JSR adjust_largest_block_size
+RTS
+
+caseB1
+CLC
+LDA heap_block_size_lo-1h,X
+ADC reserve_size
+STA heap_block_size_lo-1h,X
+LDA heap_block_size_hi-1h,X
+ADC reserve_size+1h
+STA heap_block_size_hi-1h,X
+DEX
+JSR adjust_largest_block_size
+RTS
+
+caseA1
+CLC
+LDA heap_block_address_lo,X
+ADC heap_block_size_lo,X
+STA temp_word
+LDA heap_block_address_hi,X
+ADC heap_block_size_hi,X
+STA temp_word+1h
+SEC
+LDA temp_word
+SBC heap_block_address_lo-1h,X
+STA heap_block_size_lo-1h,X
+LDA temp_word+1h
+SBC heap_block_address_hi-1h,X
+STA heap_block_size_hi-1h,X
+JSR remove_from_heap
+DEX
+JSR adjust_largest_block_size
+RTS
+
+adjust_largest_block_size
+LDY largest_block_index
+LDA heap_block_size_lo,Y
+CMP heap_block_size_lo,X
+LDA heap_block_size_hi,Y
+SBC heap_block_size_hi,X
+BCS albs_check_slbs
+LDA largest_block_index
+STA second_largest_block_index
+STX largest_block_index
+RTS
+
+albs_check_slbs
+LDY second_largest_block_index
+LDA heap_block_size_lo,Y
+CMP heap_block_size_lo,X
+LDA heap_block_size_hi,Y
+SBC heap_block_size_hi,X
+BCS albs_exit
+STX second_largest_block_index
+albs_exit
+RTS
+
+remove_from_heap #X has index to remove#
+STX temp_word
+
+LDA largest_block_index
+CMP temp_word
+BCC rfh_no_increase_lb
+DEC largest_block_index
+rfh_no_increase_lb
+LDA second_largest_block_index
+BCC rfh_no_increase_slb
+DEC second_largest_block_index
+rfh_no_increase_slb
+
+INX
+loop002
+LDA heap_block_address_lo,X
+STA heap_block_address_lo-1h,X
+LDA heap_block_address_hi,X
+STA heap_block_address_hi-1h,X
+
+LDA heap_block_size_lo,X
+STA heap_block_size_lo-1h,X
+LDA heap_block_size_hi,X
+STA heap_block_size_hi-1h,X
+
+INX
+CPX heap_size
+BCC loop002
+DEC heap_size
+LDX temp_word
+RTS
+
+insert_into_heap #X has index to insert into#
+STX temp_word
+
+LDA largest_block_index
+CMP temp_word
+BCC iih_no_increase_lb
+INC largest_block_index
+iih_no_increase_lb
+LDA second_largest_block_index
+BCC iih_no_increase_slb
+INC second_largest_block_index
+iih_no_increase_slb
+
+LDX heap_size
+DEX
+loop003
+LDA heap_block_address_lo,X
+STA heap_block_address_lo+1h,X
+LDA heap_block_address_hi,X
+STA heap_block_address_hi+1h,X
+
+LDA heap_block_size_lo,X
+STA heap_block_size_lo+1h,X
+LDA heap_block_size_hi,X
+STA heap_block_size_hi+1h,X
+
+DEX
+BMI exit001 
+CPX temp_word
+BCS loop003
+exit001
+INC heap_size
+LDX temp_word
+
+RTS

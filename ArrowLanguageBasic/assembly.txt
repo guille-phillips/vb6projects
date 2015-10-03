@@ -1,0 +1,17 @@
+70h vir_SNPHH
+7000h var_a_SNPHH
+
+7100h
+CLC
+LDA var_a_SNPHH
+ADC #00h
+STA vir_SNPHH+0d
+LDA vir_SNPHH+0d
+STA var_a_SNPHH
+LDA #00h
+STA var_a_SNPHH+1d
+LDA #00h
+STA var_a_SNPHH+2d
+LDA #00h
+STA var_a_SNPHH+3d
+RTS

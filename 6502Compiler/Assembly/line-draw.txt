@@ -1,0 +1,148 @@
+0070h
+start_x DW 0000h
+start_y DW 0000h
+finish_x DW 0000h
+finish_y DW 0000h
+row_mask DB 00000000b
+column_mask DB 00000000b
+row_offset DB 00h
+row DW 0000h
+column DW 0000h
+diffx DW 0000h
+diffy DW 0000h
+counter DW 0000h
+acc DW 0000h
+address DW 0000h
+row_step DW 320
+column_step DB 8
+mask DB 00h
+
+0C00h
+pos_to_mask
+DB 10000000b
+DB 01000000b
+DB 00100000b
+DB 00010000b
+DB 00001000b
+DB 00000100b
+DB 00000010b
+DB 00000001b
+
+0C08h
+draw_line
+
+LDA start_x
+AND #07h
+TAX
+LDA pos_to_mask,X
+STA column_mask
+
+LDA start_y
+AND #07h
+STA row_offset
+TAX
+LDA pos_to_mask,X
+STA row_mask
+STA mask
+
+LDA start_x
+STA row
+LDA start_x+1
+STA row+1
+
+LDY #3
+div_row
+BIT row+1
+BPL dr_no_carry_set
+SEC
+dr_no_carry_set
+ROR row+1
+ROR row
+DEY
+BNE div_row
+
+LDA start_y
+STA column
+LDA start_y+1
+STA column+1
+
+LDY #3
+div_column
+BIT column+1
+BPL dc_no_carry_set
+SEC
+dc_no_carry_set
+ROR column+1
+ROR column
+DEY
+BNE div_column
+
+SEC
+LDA finish_x
+SBC start_x
+STA diff_x
+STA counter
+STA acc
+LDA finish_x+1
+SBC start_x+1
+STA diff_x+1
+STA counter+1
+STA acc+1
+
+SEC
+LDA finish_y
+SBC start_y
+STA diff_y
+LDA finish_y+1
+SBC start_y+1
+STA diff_y+1
+
+BIT counter+1
+BMI end_draw_line
+
+LSR row_mask
+BCC no_next_column
+ROR row_mask
+
+LDA mask
+STA address
+
+CLC
+LDA address
+ADC #8
+STA address
+LDA address+1
+ADC #0
+STA address+1
+
+INC column
+BNE inc_column
+INC column+1
+inc_column
+
+no_next_column
+
+LDA counter
+BNE dec_counter
+DEC counter+1
+dec_counter
+DEC counter
+
+SEC
+LDA acc
+SBC diff_y
+STA acc
+LDA acc+1
+SBC diff_y+1
+STA acc+1
+
+BPL no_move_up
+
+no_move_up
+
+LDA mask
+ORA row_mask
+STA mask
+
+end_draw_line
+RTS

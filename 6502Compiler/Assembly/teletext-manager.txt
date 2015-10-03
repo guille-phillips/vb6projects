@@ -1,0 +1,115 @@
+0070h
+source        DW 0000h
+sink          DW 0000h
+linemaskptr   DW 0000h
+chunkcounter  DB 00h
+linecounter   DB 00h
+linemask      DB 00h
+linemaskindex DB 00h
+
+1F00h
+STA linemaskptr
+LDA 405h
+STA linemaskptr+1d
+LDX #00h
+LDY #7Ch
+STX sink
+STY sink+1d
+
+CLC
+LDA linemaskptr
+ADC #4d
+STA source
+LDA linemaskptr+1d
+ADC #0d
+STA source+1d
+
+LDA #10000000b
+STA linemask
+LDA #0d
+STA linemaskindex
+
+LDA #25d
+STA linecounter
+
+nextline
+LDA #5d
+STA chunkcounter
+
+nextchunk
+LDY linemaskindex
+LDA (linemaskptr),Y
+AND linemask
+BNE setnextsink
+
+LDY#6d
+copychunk
+LDA (source),Y
+STA (sink),Y
+DEY
+BPL copychunk
+
+uncompress
+LDX #1d
+LDY #0d
+nextbyte
+LDA #00h
+shift
+ROR A
+LDA (sink),Y
+ROR A
+STA (sink),Y
+ROL A
+INY
+CPY #8d
+BNE shift
+TXA
+TAY
+INX
+CPX #9d
+BNE nextbyte
+
+fixup
+LDY#7d
+fixupchunk
+LDA (sink),Y
+CMP #32d
+BCS fixupok
+ORA #80h
+fixupok
+STA (sink),Y
+DEY
+BPL fixupchunk
+
+setnextchunk
+CLC
+LDA source
+ADC #7d
+STA source
+LDA source+1d
+ADC #0d
+STA source+1d
+
+
+setnextsink
+CLC
+LDA sink
+ADC #8d
+STA sink
+LDA sink+1d
+ADC #0d
+STA sink+1d
+
+DEC chunkcounter
+BNE nextchunk
+
+LSR linemask
+BCC notnextbyte
+ROR linemask
+INC linemaskindex
+notnextbyte
+
+DEC linecounter
+BNE nextline
+
+RTS

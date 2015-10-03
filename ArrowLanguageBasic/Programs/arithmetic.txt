@@ -1,0 +1,17 @@
+class int [0..10]  
+class word [0..65535]    
+new a @0404h int
+new b @0408h int
+new c @040Ch int
+new d @0410h int
+new e @0414h int
+new f @0418h int
+new g @041Ch int
+
+_b:a+2
+_c:a-2
+_d:a*2
+_e:a/2
+_f:a%2
+_g:0
+

@@ -1,0 +1,20 @@
+keyword_base or ORA |AND| EOR ADC STA LDA CMP SBC ASL ROL LSR ROR STX LDX DEC INC BIT JMP STY LDY CPY CPX BPL BMI BVC BVS BCC BCS BNE BEQ PHP CLC PLP SEC PHA CLI PLA SEI DEY TYA TAY CLV INY CLD INX SED TXA TXS TAX TSX DEX NOP BRK JSR RTI RTS DB DW DS HALT | |
+keyword and keyword_base omit not in a to z _ | | | |
+dec_number and list in 0 to 9 | | omit d not in a to z 0 to 9 | | | |
+bin_number and list in 0 to 1 | | omit b not in a to z 0 to 9 | | | |
+hex_number and list in 0 to 9 A to F | | omit h  not in a to z 0 to 9 | | | |
+label and not keyword | list or and \ 032 | in 0 to 9 a to z _  | | | | |
+number or bin_number dec_number hex_number label | |
+expression list number del in +-*\ | | |
+immediate and omit # expression | |
+indexed and expression opt and omit , or x y | | | | |
+bracket and omit ( indexed omit ) opt and omit , y | | | |
+mode or immediate indexed bracket | |
+space omit list in 032 009 | min 0 | |
+end_line list in 010 013 009 032 | min 0 | |
+comment and # list skip | until # | end_line | |
+instruction or comment and keyword space opt mode | end_line | and expression end_line | | |
+
+extended list term del or :+ +: :- -: :* *: :/ /: := =: ? + - * / & || ^ | | |
+term or and ( space extended space ) | number | |
+

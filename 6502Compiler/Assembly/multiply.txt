@@ -1,0 +1,19 @@
+0C00h
+
+LDX #08h
+LDA #00h
+CLC
+
+nextbit
+BCC noadd
+CLC
+ADC 71h
+noadd
+ROR A
+ROR 70h
+DEX
+BPL nextbit
+STA 71h
+RTS
+
+

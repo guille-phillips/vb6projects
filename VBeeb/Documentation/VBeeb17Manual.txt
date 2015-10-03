@@ -1,0 +1,169 @@
+VBeeb 1.7 Manual
+----------------
+
+1. Introduction
+
+VBeeb emulates a basic BBC Microcomputer system.  This includes dual Disc double sided drives, Cassette interface and ROMs.
+
+VBeeb is made to closely mimic the working of a real BBC Micro at a bit level, this means that software and games produced
+for the original BBC Micro should run faithfully on the emuulator.
+
+
+2. The Keyboard
+
+The layout of the BBC Micro keyboard differs in a number of ways from modern computer keyboards.  
+However, the majority of keys such as the letter and number keys appear in the same place as a modern keyboard.  The following
+differences apply - the modern keyboard layout is given first followed by the BBC Micro layout:
+
+F1 to F10 are F0 to F9
+F12 is Break
+Backslash '\' is Shift Lock
+Right Control is Copy
+Open Square Bracket '[' is @
+Close Square Bracket ']' is [
+Hash '#' is ]
+Insert is \
+Delete is _
+Single Quote ' is :
+Home or Left Arrow is Cursor Left
+End or Up Arrow is Cursor Up
+Page Up or Right Arrow is Cursor Right
+Page Down or Down Arrow is Cursor Down
+
+Other keys as seen on a BBC Micro are as on a modern keyboard.
+
+The status of the Caps Lock, Shift Lock and Cassette Motor LEDs are shown as text on the status bar of VBeeb.
+
+
+3. The File Menu
+
+VBeeb can load and save the following types of files:
+
+Disc images: both single sided (img and ssd) and double sided (dsd),
+Cassette Images: UEF files.
+Archive Format: groups of files with acompanying data (inf).
+Emulator State Snapshots: UEF files.
+
+3.1 Load
+
+Any type of file can be loaded from the 'Load' menu.  The emulator will then mimic the action of either inserting a disc or 
+cassette or re-instating a previously stored state (snapshot).
+
+It is worth noting that any changes made to discs, cassette or emulator state - within the emualtor - are not written back to 
+the file, unless explicitly 'Saved' at a later point.
+
+The disc drive unit to be loaded (either of two), can be selected from the Disc menu.
+
+When loading Archive files either a disc is created (default) or a cassette can be created (see The Cassette menu).
+
+Another way to load a file is to drag and drop it into the emulator window.  
+
+Note that except for snapshots, loading a file will not automatically run the disc or cassette, this must be done from the
+emulator by issuing the appropriate filing system command (e.g. CHAIN).
+
+
+3.2 Save Disc
+
+The current state of the discs can be saved to file.  These can be saved as either:
+Single Sided: the first side of the selected disc is saved as an ssd file.
+Double Sided: both sides of the selected disc are saved as a dsd file. 
+Archive Format: the first side of the selected disc is saved as a set of inf files.
+
+3.3 Save Cassette
+
+The current state of the cassette is saved as a uef file.
+
+3.4 Save Snapshot
+
+The current state of the emulator is save as a uef file.  This allows you to re-instate a previously session at a later date.
+This is useful for saving game positions for example.
+
+3.5 Send Snapshot
+
+Those with an original BBC Micro and a suitable serial cable, can connect with the computer running the emulator and send a 
+previously saved Snapshot to run natively on the original BBC Micro. In order to do this correctly take the following steps:
+
+a. Connect the two computers with the serial cable.
+b. Turn on the BBC Micro (or reset by pressing Break)
+c. Enter *FX2,1 on the BBC Micro and press Return.  This will set it to receive keyboard input from the serial (RS432) port.
+d. Select 'Send Snapshot' on the emulator and find the snapshot (uef) file to send.
+e. Wait for about 20 seconds for the transfer to take place.
+f. Both the emulator and BBC Micro will then be simultaneously loaded with the Snapshot.
+
+
+4. The Disc Menu
+4.1 Insert Blank
+This will create a blank double sided disc. Any previously loaded disc will be erased.  Note that this is dependent on which
+drive has been selected.
+
+4.2 Eject
+The disc in the currently selected drive can no longer be read and will produce an error in emulator if read.
+
+4.3 Flip Sides
+This will swap the two sides of the currently selected disc.  This allows different sides of a double sided disc to be saved
+as a single sided disc.
+
+4.4 Select Drive
+The selects which drive unit is in force when performing any disc related menu operation.
+
+
+5. The Cassette Menu
+5.1 Insert and Eject
+These will be availble in a future release of VBeeb.
+
+5.2 Control
+This will display a pop-up showing all the blocks on a tape.  Whilst loading a tape (using CHAIN for example), the tape can 
+be re-wound or forward-wound by clicking on the appropriate block.
+
+5.3 Load Archive As Cassette
+By default files in Archive format are loaded as a disc. By ticking this option the Archive files will be loaded as cassette.
+Archive files may be ordered or unordered.  Ordered files will be loaded as cassette in the order given.
+
+
+6. The System Menu
+The system menu lets you change certain aspects of the hardware configuration of the emulator.
+
+6.1 ROM Sockets
+The original BBC Micro motherboard had space for four 8k ROM chips. ROM chips are stored as files with the rom extension.
+One of the these would be occupied by the BBC Basic ROM and one by the Disc Filing System ROM (Acorn). 
+By default on first using the emulator both these ROMs will be present.
+
+A new ROM can be inserted by selecting the Load menu on the corresponding socket.
+A socket can be made empty by selecting the Empy menu.
+A socket can be made as a writeable RAM chip (sideways RAM), by ticking the Sideways RAM menu.
+
+Usually a Reboot (see below) should be performed after changing the configuration of ROM sockets.
+
+6.2 Keyboard Links
+On some BBC Micros a set of dip switches on the keyboard PCB allowed for selecting the display mode on boot (and certain aspects
+of the disc drive system).
+Ticking a link box is the equivalent of setting a dip switch to on position.
+
+6.3 Reboot
+This performs a hard-reboot of the emulator.  This is equivalent to switching off and then on a real BBC Micro.
+
+
+7. The VBeeb Menu
+7.1 Preferences
+This will be available in a future release of VBeeb.
+
+7.2 About
+Summary information about VBeeb.
+
+7.3 Exit
+The emulator will be closed down.  
+Any loaded discs or cassettes or emulator state will be lost.  
+Any Cassete or Disc options will be remembered.
+The configuration of ROM sockets and Keyboard Links will be remembered.
+
+
+8. Appendix
+8.1
+If you are unfamiliar with how to program or otherwise operate a BBC Micro, the BBC Microcomputer User Guide, 
+BBC Microcomputer Advanced User Guide or BBC Micromputer Disc User Guide are indispensible.
+
+8.2
+When running the emulator for the first time, VBeeb will expand the Teletext font definition files.  This can take up to about a
+minute on some systems and it may appear that the emulator has hung, please be patient.  On subsequent occasions VBeeb should 
+start up instantly.
+

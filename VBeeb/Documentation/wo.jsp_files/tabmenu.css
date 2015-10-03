@@ -1,0 +1,167 @@
+#tabmenu {
+	PADDING-LEFT: 10px;
+	PADDING-BOTTOM: 19px;
+	MARGIN: 0px;
+	BORDER-BOTTOM: #cccccc 1px solid;
+}
+#tabmenu UL {
+	padding: 0px;
+	display: inline;
+	margin: 0px;
+	list-style-type: none;
+}
+#tabmenu LI {
+	padding: 0px;	
+	margin: 0px;	
+}
+#tabmenu A {
+	border: #ccc 1px solid;
+	padding: 2px 10px 2px 10px;
+	color: #036;
+	background-color: #e8ebf0;
+	float: left;
+	line-height: 14px;
+	margin-right: 8px;
+	text-decoration: none;
+}
+#tabmenu A.active {
+	BACKGROUND: #fff;
+	COLOR: #000;
+	BORDER-BOTTOM: #fff 1px solid;
+}
+#tabmenu A:hover {
+	COLOR: #f00;
+}
+.section-1 #tabmenu LI#nav-1 A {
+	FONT-SIZE: 9pt; BACKGROUND: #ffffff; COLOR: #000; BORDER-BOTTOM: #ffffff 1px solid
+}
+.section-2 #tabmenu LI#nav-2 A {
+	FONT-SIZE: 9pt; BACKGROUND: #ffffff; COLOR: #000; BORDER-BOTTOM: #ffffff 1px solid
+}
+.section-3 #tabmenu LI#nav-3 A {
+	FONT-SIZE: 9pt; BACKGROUND: #ffffff; COLOR: #000; BORDER-BOTTOM: #ffffff 1px solid
+}
+.section-4 #tabmenu LI#nav-4 A {
+	FONT-SIZE: 9pt; BACKGROUND: #ffffff; COLOR: #000; BORDER-BOTTOM: #ffffff 1px solid
+}
+#tabmenu UL A:hover {
+	COLOR: #f00
+}
+#tabcontents {
+	CLEAR: both;
+	border: #ccc solid 1px;
+	padding: 15px;
+	border-top: medium none;
+	background-color: #fff;
+	margin: 0px;
+}
+/* css use by clea */
+#menu {
+	PADDING-LEFT: 10px;
+	PADDING-BOTTOM: 19px;
+	MARGIN: 0px;
+	BORDER-BOTTOM: #ccc 1px solid
+}
+#menu ul {
+	PADDING-RIGHT: 0px;
+	DISPLAY: inline;
+	PADDING-LEFT: 0px;
+	PADDING-BOTTOM: 0px;
+	MARGIN: 0px;
+	PADDING-TOP: 0px;
+	LIST-STYLE-TYPE: none
+}
+#menu li {
+	PADDING-RIGHT: 0px;
+	DISPLAY: inline;
+	PADDING-LEFT: 0px;
+	PADDING-BOTTOM: 0px;
+	MARGIN: 0px;
+	PADDING-TOP: 0px;
+	LIST-STYLE-TYPE: none
+}
+#menu a:link {
+	BORDER-RIGHT: #ccc 1px solid;
+	PADDING-RIGHT: 10px;
+	BORDER-TOP: #ccc 1px solid;
+	PADDING-LEFT: 10px;
+	BACKGROUND: #e8ebf0;
+	FLOAT: left;
+	PADDING-BOTTOM: 2px;
+	BORDER-LEFT: #ccc 1px solid;
+	COLOR: #666;
+	LINE-HEIGHT: 14px;
+	MARGIN-RIGHT: 8px;
+	PADDING-TOP: 2px;
+	BORDER-BOTTOM: #ccc 1px solid;
+	TEXT-DECORATION: none
+}
+#menu a:visited {
+	BORDER-RIGHT: #ccc 1px solid;
+	PADDING-RIGHT: 10px;
+	BORDER-TOP: #ccc 1px solid;
+	PADDING-LEFT: 10px;
+	BACKGROUND: #e8ebf0;
+	FLOAT: left;
+	PADDING-BOTTOM: 2px;
+	BORDER-LEFT: #ccc 1px solid;
+	COLOR: #666;
+	LINE-HEIGHT: 14px;
+	MARGIN-RIGHT: 8px;
+	PADDING-TOP: 2px;
+	BORDER-BOTTOM: #ccc 1px solid;
+	TEXT-DECORATION: none
+}
+#menu a.active:link {
+	BACKGROUND: #fff;
+	COLOR: #000;
+	BORDER-BOTTOM: #fff 1px solid
+}
+#menu a.active:visited {
+	BACKGROUND: #fff;
+	COLOR: #000;
+	BORDER-BOTTOM: #fff 1px solid
+}
+#menu a:hover {
+	COLOR: #f00
+}
+.section-1 #menu li#nav-1 a {
+	font-size: 9pt;
+	BACKGROUND: #fff;
+	COLOR: #000;
+	BORDER-BOTTOM: #fff 1px solid
+}
+.section-2 #menu li#nav-2 a {
+	font-size: 9pt;
+	BACKGROUND: #fff;
+	COLOR: #000;
+	BORDER-BOTTOM: #fff 1px solid
+}
+.section-3 #menu li#nav-3 a {
+	font-size: 9pt;
+	BACKGROUND: #fff;
+	COLOR: #000;
+	BORDER-BOTTOM: #fff 1px solid
+}
+.section-4 #menu li#nav-4 a {
+	font-size: 9pt;
+	BACKGROUND: #fff;
+	COLOR: #000;
+	BORDER-BOTTOM: #fff 1px solid
+}
+#menu ul a:hover {
+	COLOR: #f00
+}
+#contents {
+	CLEAR: both;
+	BORDER-RIGHT: #ccc 1px solid;
+	PADDING-RIGHT: 15px;
+	BORDER-TOP: medium none;
+	PADDING-LEFT: 15px;
+	BACKGROUND: #fff;
+	PADDING-BOTTOM: 15px;
+	MARGIN: 0px;
+	BORDER-LEFT: #ccc 1px solid;
+	PADDING-TOP: 15px;
+	BORDER-BOTTOM: #ccc 1px solid
+}

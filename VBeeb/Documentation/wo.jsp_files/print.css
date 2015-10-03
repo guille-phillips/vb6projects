@@ -1,0 +1,42 @@
+#menu_bar {display: none;}
+#footer {display: none;}
+#header {
+border: none;
+width: 100%;
+z-index: 10;
+border-bottom: #036 solid 2px !important;
+}
+#rightHeader {
+display: none;
+}
+#navigation {left: 0px; top: 73px; font-size: 10px;}
+#l-col {display: none;}
+#r-col {display: none;}
+body {
+padding: 0 0 .1em 0;
+}
+#c-col {
+visibility: visible;
+	position: relative !important;
+	top: 70px !important;
+	left: 0px !important;
+	padding: 1em 0 0 0;
+	margin: 0px;
+ 	width: 100%;
+ 	clear: both;
+ 	float: none !important;}
+.tools { display:none; visibility: hidden;}
+.udm {display: none; visibility: hidden;}
+table.patentScopeResults {
+margin-right: 105px !important;
+margin-right: 0;
+}
+#patentScopeNav {
+display: none;
+}
+@media screen
+{
+body {
+ padding-left: 1em;
+}
+}

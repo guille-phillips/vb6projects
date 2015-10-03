@@ -1,0 +1,10 @@
+dec_number and list in 0 to 9 | | omit opt d | not in 0 to 9 a to z | | | |
+bin_number and list in 0 to 1 | | omit b not in 0 to 9 a to z | | | |
+hex_number and list in 0 to 9 A to F | | omit h not in 0 to 9 a to z | | | |
+bracketed and omit ( expression omit ) | |
+label list in 0 to 9 A to Z . | | |
+number or bin_number dec_number hex_number | |
+bnumber and opt R | opt W | number | |
+unary and opt or ?? !! %% ? ! % | | term | |
+term or bnumber bracketed label unary | |
+expression list term del or + - * / = <= >= < > & || ^ | | |

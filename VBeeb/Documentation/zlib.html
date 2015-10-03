@@ -1,0 +1,340 @@
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_1' class='d2nlines'>  1: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_2' class='d2nlines'>  2: </span>Option Explicit
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_3' class='d2nlines'>  3: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_4' class='d2nlines'>  4: </span>Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (hpvDest As Any, hpvSource As Any, ByVal cbCopy As Long)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_5' class='d2nlines'>  5: </span>Private Declare Function compress Lib "zlib.dll" (dest As Any, destLen As Any, src As Any, ByVal srcLen As Long) As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_6' class='d2nlines'>  6: </span>Private Declare Function compress2 Lib "zlib.dll" (dest As Any, destLen As Any, src As Any, ByVal srcLen As Long, ByVal level As Long) As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_7' class='d2nlines'>  7: </span>Private Declare Function uncompress Lib "zlib.dll" (dest As Any, destLen As Any, src As Any, ByVal srcLen As Long) As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_8' class='d2nlines'>  8: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_9' class='d2nlines'>  9: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_10' class='d2nlines'> 10: </span>Const m_def_CompressedSize = 0
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_11' class='d2nlines'> 11: </span>Const m_def_OriginalSize = 0
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_12' class='d2nlines'> 12: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_13' class='d2nlines'> 13: </span>Dim m_CompressedSize As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_14' class='d2nlines'> 14: </span>Dim m_OriginalSize As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_15' class='d2nlines'> 15: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_16' class='d2nlines'> 16: </span>Enum CZErrors
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_17' class='d2nlines'> 17: </span>    Z_OK = 0
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_18' class='d2nlines'> 18: </span>    Z_STREAM_END = 1
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_19' class='d2nlines'> 19: </span>    Z_NEED_DICT = 2
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_20' class='d2nlines'> 20: </span>    Z_ERRNO = -1
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_21' class='d2nlines'> 21: </span>    Z_STREAM_ERROR = -2
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_22' class='d2nlines'> 22: </span>    Z_DATA_ERROR = -3
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_23' class='d2nlines'> 23: </span>    Z_MEM_ERROR = -4
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_24' class='d2nlines'> 24: </span>    Z_BUF_ERROR = -5
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_25' class='d2nlines'> 25: </span>    Z_VERSION_ERROR = -6
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_26' class='d2nlines'> 26: </span>End Enum
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_27' class='d2nlines'> 27: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_28' class='d2nlines'> 28: </span>Enum CompressionLevels
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_29' class='d2nlines'> 29: </span>    Z_NO_COMPRESSION = 0
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_30' class='d2nlines'> 30: </span>    Z_BEST_SPEED = 1
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_31' class='d2nlines'> 31: </span>    'note that levels 2-8 exist, too
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_32' class='d2nlines'> 32: </span>    Z_BEST_COMPRESSION = 9
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_33' class='d2nlines'> 33: </span>    Z_DEFAULT_COMPRESSION = -1
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_34' class='d2nlines'> 34: </span>End Enum
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_35' class='d2nlines'> 35: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_36' class='d2nlines'> 36: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_37' class='d2nlines'> 37: </span>Public Function CompressByteArray(TheData() As Byte, CompressionLevel As Integer) As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_38' class='d2nlines'> 38: </span>Dim result As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_39' class='d2nlines'> 39: </span>Dim BufferSize As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_40' class='d2nlines'> 40: </span>Dim TempBuffer() As Byte
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_41' class='d2nlines'> 41: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_42' class='d2nlines'> 42: </span>OriginalSize = UBound(TheData) + 1
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_43' class='d2nlines'> 43: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_44' class='d2nlines'> 44: </span>'Allocate memory for byte array
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_45' class='d2nlines'> 45: </span>BufferSize = UBound(TheData) + 1
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_46' class='d2nlines'> 46: </span>BufferSize = BufferSize + (BufferSize * 0.01) + 12
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_47' class='d2nlines'> 47: </span>ReDim TempBuffer(BufferSize)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_48' class='d2nlines'> 48: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_49' class='d2nlines'> 49: </span>'Compress byte array (data)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_50' class='d2nlines'> 50: </span>result = compress2(TempBuffer(0), BufferSize, TheData(0), UBound(TheData) + 1, CompressionLevel)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_51' class='d2nlines'> 51: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_52' class='d2nlines'> 52: </span>'Truncate to compressed size
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_53' class='d2nlines'> 53: </span>ReDim Preserve TheData(BufferSize - 1)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_54' class='d2nlines'> 54: </span>CopyMemory TheData(0), TempBuffer(0), BufferSize
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_55' class='d2nlines'> 55: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_56' class='d2nlines'> 56: </span>'Cleanup
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_57' class='d2nlines'> 57: </span>Erase TempBuffer
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_58' class='d2nlines'> 58: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_59' class='d2nlines'> 59: </span>'Set property
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_60' class='d2nlines'> 60: </span>CompressedSize = UBound(TheData) + 1
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_61' class='d2nlines'> 61: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_62' class='d2nlines'> 62: </span>'Return error code (if any)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_63' class='d2nlines'> 63: </span>CompressByteArray = result
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_64' class='d2nlines'> 64: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_65' class='d2nlines'> 65: </span>End Function
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_66' class='d2nlines'> 66: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_67' class='d2nlines'> 67: </span>Public Function CompressString(TheString As String, CompressionLevel As Integer) As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_68' class='d2nlines'> 68: </span>Dim orgSize As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_69' class='d2nlines'> 69: </span>Dim ret As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_70' class='d2nlines'> 70: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_71' class='d2nlines'> 71: </span>OriginalSize = Len(TheString)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_72' class='d2nlines'> 72: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_73' class='d2nlines'> 73: </span>'Allocate string space for the buffers
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_74' class='d2nlines'> 74: </span>Dim CmpSize As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_75' class='d2nlines'> 75: </span>Dim TBuff As String
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_76' class='d2nlines'> 76: </span>orgSize = Len(TheString)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_77' class='d2nlines'> 77: </span>TBuff = String(orgSize + (orgSize * 0.01) + 12, 0)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_78' class='d2nlines'> 78: </span>CmpSize = Len(TBuff)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_79' class='d2nlines'> 79: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_80' class='d2nlines'> 80: </span>'Compress string (temporary string buffer) data
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_81' class='d2nlines'> 81: </span>ret = compress2(ByVal TBuff, CmpSize, ByVal TheString, Len(TheString), CompressionLevel)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_82' class='d2nlines'> 82: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_83' class='d2nlines'> 83: </span>'Crop the string and set it to the actual string.
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_84' class='d2nlines'> 84: </span>TheString = Left$(TBuff, CmpSize)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_85' class='d2nlines'> 85: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_86' class='d2nlines'> 86: </span>'Set compressed size of string.
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_87' class='d2nlines'> 87: </span>CompressedSize = CmpSize
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_88' class='d2nlines'> 88: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_89' class='d2nlines'> 89: </span>'Cleanup
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_90' class='d2nlines'> 90: </span>TBuff = ""
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_91' class='d2nlines'> 91: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_92' class='d2nlines'> 92: </span>'Return error code (if any)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_93' class='d2nlines'> 93: </span>CompressString = ret
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_94' class='d2nlines'> 94: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_95' class='d2nlines'> 95: </span>End Function
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_96' class='d2nlines'> 96: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_97' class='d2nlines'> 97: </span>Public Function DecompressByteArray(TheData() As Byte, OrigSize As Long) As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_98' class='d2nlines'> 98: </span>Dim result As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_99' class='d2nlines'> 99: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_100' class='d2nlines'>100: </span>'Allocate memory for buffers
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_101' class='d2nlines'>101: </span>Dim BufferSize As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_102' class='d2nlines'>102: </span>Dim TempBuffer() As Byte
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_103' class='d2nlines'>103: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_104' class='d2nlines'>104: </span>OriginalSize = OrigSize
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_105' class='d2nlines'>105: </span>CompressedSize = UBound(TheData) + 1
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_106' class='d2nlines'>106: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_107' class='d2nlines'>107: </span>BufferSize = OrigSize
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_108' class='d2nlines'>108: </span>BufferSize = BufferSize + (BufferSize * 0.01) + 12
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_109' class='d2nlines'>109: </span>ReDim TempBuffer(BufferSize)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_110' class='d2nlines'>110: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_111' class='d2nlines'>111: </span>'Decompress data
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_112' class='d2nlines'>112: </span>result = uncompress(TempBuffer(0), BufferSize, TheData(0), UBound(TheData) + 1)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_113' class='d2nlines'>113: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_114' class='d2nlines'>114: </span>'Truncate buffer to compressed size
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_115' class='d2nlines'>115: </span>ReDim Preserve TheData(BufferSize - 1)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_116' class='d2nlines'>116: </span>CopyMemory TheData(0), TempBuffer(0), BufferSize
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_117' class='d2nlines'>117: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_118' class='d2nlines'>118: </span>'Return error code (if any)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_119' class='d2nlines'>119: </span>DecompressByteArray = result
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_120' class='d2nlines'>120: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_121' class='d2nlines'>121: </span>End Function
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_122' class='d2nlines'>122: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_123' class='d2nlines'>123: </span>Public Function DecompressString(TheString As String, OrigSize As Long) As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_124' class='d2nlines'>124: </span>Dim result As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_125' class='d2nlines'>125: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_126' class='d2nlines'>126: </span>'Allocate string space
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_127' class='d2nlines'>127: </span>Dim CmpSize As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_128' class='d2nlines'>128: </span>Dim TBuff As String
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_129' class='d2nlines'>129: </span>TBuff = String(OriginalSize + (OriginalSize * 0.01) + 12, 0)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_130' class='d2nlines'>130: </span>CmpSize = Len(TBuff)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_131' class='d2nlines'>131: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_132' class='d2nlines'>132: </span>OriginalSize = OrigSize
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_133' class='d2nlines'>133: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_134' class='d2nlines'>134: </span>'Decompress
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_135' class='d2nlines'>135: </span>result = uncompress(ByVal TBuff, CmpSize, ByVal TheString, Len(TheString))
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_136' class='d2nlines'>136: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_137' class='d2nlines'>137: </span>'Make string the size of the uncompressed string
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_138' class='d2nlines'>138: </span>TheString = Left$(TBuff, CmpSize)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_139' class='d2nlines'>139: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_140' class='d2nlines'>140: </span>CompressedSize = CmpSize
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_141' class='d2nlines'>141: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_142' class='d2nlines'>142: </span>'Return error code (if any)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_143' class='d2nlines'>143: </span>DecompressString = result
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_144' class='d2nlines'>144: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_145' class='d2nlines'>145: </span>End Function
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_146' class='d2nlines'>146: </span>Public Function CompressFile(FilePathIn As String, FilePathOut As String, CompressionLevel As Integer) As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_147' class='d2nlines'>147: </span>Dim TheBytes() As Byte
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_148' class='d2nlines'>148: </span>Dim result As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_149' class='d2nlines'>149: </span>Dim lngFileLen As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_150' class='d2nlines'>150: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_151' class='d2nlines'>151: </span>lngFileLen = FileLen(FilePathIn)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_152' class='d2nlines'>152: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_153' class='d2nlines'>153: </span>'allocate byte array
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_154' class='d2nlines'>154: </span>ReDim TheBytes(lngFileLen - 1)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_155' class='d2nlines'>155: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_156' class='d2nlines'>156: </span>'read byte array from file
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_157' class='d2nlines'>157: </span>Open FilePathIn For Binary Access Read As #1
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_158' class='d2nlines'>158: </span>    Get #1, , TheBytes()
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_159' class='d2nlines'>159: </span>Close #1
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_160' class='d2nlines'>160: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_161' class='d2nlines'>161: </span>'compress byte array
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_162' class='d2nlines'>162: </span>result = CompressByteArray(TheBytes(), CompressionLevel)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_163' class='d2nlines'>163: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_164' class='d2nlines'>164: </span>'kill any file in place
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_165' class='d2nlines'>165: </span>On Error Resume Next
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_166' class='d2nlines'>166: </span>Kill FilePathOut
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_167' class='d2nlines'>167: </span>On Error GoTo 0
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_168' class='d2nlines'>168: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_169' class='d2nlines'>169: </span>'Write it out
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_170' class='d2nlines'>170: </span>Open FilePathOut For Binary Access Write As #1
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_171' class='d2nlines'>171: </span>    Put #1, , lngFileLen 'must store the length of the original file
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_172' class='d2nlines'>172: </span>    Put #1, , TheBytes()
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_173' class='d2nlines'>173: </span>Close #1
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_174' class='d2nlines'>174: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_175' class='d2nlines'>175: </span>Erase TheBytes
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_176' class='d2nlines'>176: </span>CompressFile = result
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_177' class='d2nlines'>177: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_178' class='d2nlines'>178: </span>End Function
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_179' class='d2nlines'>179: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_180' class='d2nlines'>180: </span>Public Function DecompressFile(FilePathIn As String, FilePathOut As String) As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_181' class='d2nlines'>181: </span>Dim TheBytes() As Byte
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_182' class='d2nlines'>182: </span>Dim result As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_183' class='d2nlines'>183: </span>Dim lngFileLen As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_184' class='d2nlines'>184: </span>'allocate byte array
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_185' class='d2nlines'>185: </span>ReDim TheBytes(FileLen(FilePathIn) - 1)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_186' class='d2nlines'>186: </span>Dim f As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_187' class='d2nlines'>187: </span>f = FreeFile
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_188' class='d2nlines'>188: </span>'read byte array from file
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_189' class='d2nlines'>189: </span>Open FilePathIn For Binary Access Read As #f
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_190' class='d2nlines'>190: </span>   ' ]Get #1, , lngFileLen 'the original (uncompressed) file's length
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_191' class='d2nlines'>191: </span>    Get #f, , TheBytes()
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_192' class='d2nlines'>192: </span>Close #f
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_193' class='d2nlines'>193: </span>'lngFileLen = 40056
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_194' class='d2nlines'>194: </span>'decompress
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_195' class='d2nlines'>195: </span>result = DecompressByteArray(TheBytes(), 5000000) ' was 400000 This will change the max filesize
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_196' class='d2nlines'>196: </span>'result = DecompressByteArray(TheBytes(), lngFileLen)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_197' class='d2nlines'>197: </span>'kill any file already there
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_198' class='d2nlines'>198: </span>On Error Resume Next
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_199' class='d2nlines'>199: </span>Kill FilePathOut
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_200' class='d2nlines'>200: </span>On Error GoTo 0
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_201' class='d2nlines'>201: </span>f = FreeFile
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_202' class='d2nlines'>202: </span>'Write it out
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_203' class='d2nlines'>203: </span>Open FilePathOut For Binary Access Write As #f
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_204' class='d2nlines'>204: </span>    Put #f, , TheBytes()
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_205' class='d2nlines'>205: </span>Close #f
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_206' class='d2nlines'>206: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_207' class='d2nlines'>207: </span>Erase TheBytes
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_208' class='d2nlines'>208: </span>DecompressFile = result
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_209' class='d2nlines'>209: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_210' class='d2nlines'>210: </span>End Function
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_211' class='d2nlines'>211: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_212' class='d2nlines'>212: </span>Public Property Get CompressedSize() As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_213' class='d2nlines'>213: </span>    CompressedSize = m_CompressedSize
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_214' class='d2nlines'>214: </span>End Property
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_215' class='d2nlines'>215: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_216' class='d2nlines'>216: </span>Private Property Let CompressedSize(ByVal New_CompressedSize As Long)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_217' class='d2nlines'>217: </span>    m_CompressedSize = New_CompressedSize
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_218' class='d2nlines'>218: </span>    
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_219' class='d2nlines'>219: </span>End Property
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_220' class='d2nlines'>220: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_221' class='d2nlines'>221: </span>Public Property Get OriginalSize() As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_222' class='d2nlines'>222: </span>    OriginalSize = m_OriginalSize
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_223' class='d2nlines'>223: </span>    
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_224' class='d2nlines'>224: </span>End Property
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_225' class='d2nlines'>225: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_226' class='d2nlines'>226: </span>Private Property Let OriginalSize(ByVal New_OriginalSize As Long)
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_227' class='d2nlines'>227: </span>    m_OriginalSize = New_OriginalSize
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_228' class='d2nlines'>228: </span>    
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_229' class='d2nlines'>229: </span>End Property
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_230' class='d2nlines'>230: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_231' class='d2nlines'>231: </span>Private Sub Class_Initialize()
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_232' class='d2nlines'>232: </span>    m_CompressedSize = m_def_CompressedSize
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_233' class='d2nlines'>233: </span>    m_OriginalSize = m_def_OriginalSize
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_234' class='d2nlines'>234: </span>    
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_235' class='d2nlines'>235: </span>End Sub
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_236' class='d2nlines'>236: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_237' class='d2nlines'>237: </span>Public Function InstrCount(StringToSearch As String, _
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_238' class='d2nlines'>238: </span>           StringToFind As String) As Long
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_239' class='d2nlines'>239: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_240' class='d2nlines'>240: </span>    If Len(StringToFind) Then
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_241' class='d2nlines'>241: </span>        InstrCount = UBound(Split(StringToSearch, StringToFind))
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_242' class='d2nlines'>242: </span>    End If
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_243' class='d2nlines'>243: </span>End Function
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_244' class='d2nlines'>244: </span>
+<br><span id='d2_nlines_89b36871e1ec4d57b5e619f41152506a_245' class='d2nlines'>245: </span>
+
+
+Now to use this go back to your main form and put this code at the bottom:
+CODE
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_1' class='d2nlines'> 1: </span>
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_2' class='d2nlines'> 2: </span>Sub GetZlib(FileSize As Long, Filenumber As Long, strPrefix As String)
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_3' class='d2nlines'> 3: </span>'***************************************
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_4' class='d2nlines'> 4: </span>'Purpose: To get a zlib file given the size then decompress and
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_5' class='d2nlines'> 5: </span>'   detect the filetype if possible
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_6' class='d2nlines'> 6: </span>'***************************************
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_7' class='d2nlines'> 7: </span>On Error GoTo badZlib
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_8' class='d2nlines'> 8: </span>    'Kill the old temp files
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_9' class='d2nlines'> 9: </span>    Call KillOldTempFiles
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_10' class='d2nlines'>10: </span>    
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_11' class='d2nlines'>11: </span>    Dim bArray() As Byte
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_12' class='d2nlines'>12: </span>    ReDim bArray(FileSize)
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_13' class='d2nlines'>13: </span>    
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_14' class='d2nlines'>14: </span>    Get #Filenumber, , bArray
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_15' class='d2nlines'>15: </span>    Dim F2 As Long
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_16' class='d2nlines'>16: </span>    F2 = FreeFile
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_17' class='d2nlines'>17: </span>    
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_18' class='d2nlines'>18: </span>    Open App.Path & "\temp.zlib" For Binary Access Write As #F2
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_19' class='d2nlines'>19: </span>        Put #F2, , bArray
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_20' class='d2nlines'>20: </span>    Close #F2
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_21' class='d2nlines'>21: </span>    Dim strExt As String
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_22' class='d2nlines'>22: </span>    'Beta Uncompress
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_23' class='d2nlines'>23: </span>    Dim cComp As New clsCompression
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_24' class='d2nlines'>24: </span>    Call cComp.DecompressFile(App.Path & "\temp.zlib", App.Path & "\temp2.zlib")
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_25' class='d2nlines'>25: </span>    F2 = FreeFile
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_26' class='d2nlines'>26: </span>    Open App.Path & "\temp2.zlib" For Binary Access Read Lock Read As #F2
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_27' class='d2nlines'>27: </span>        ReDim bArray(LOF(F2) - 1)
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_28' class='d2nlines'>28: </span>        Get #F2, , bArray
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_29' class='d2nlines'>29: </span>    Close #F2
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_30' class='d2nlines'>30: </span>    'Check the file type
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_31' class='d2nlines'>31: </span>    If UBound(bArray) > 4 Then
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_32' class='d2nlines'>32: </span>        If bArray(0) = 66 And bArray(1) = 77 Then
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_33' class='d2nlines'>33: </span>            strExt = ".bmp"
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_34' class='d2nlines'>34: </span>        End If
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_35' class='d2nlines'>35: </span>        If bArray(0) = 71 And bArray(1) = 73 And bArray(2) = 70 Then
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_36' class='d2nlines'>36: </span>            strExt = ".gif"
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_37' class='d2nlines'>37: </span>        End If
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_38' class='d2nlines'>38: </span>        If bArray(0) = 0 And bArray(2) = 1 Then
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_39' class='d2nlines'>39: </span>            strExt = ".ico"
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_40' class='d2nlines'>40: </span>        End If
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_41' class='d2nlines'>41: </span>        If bArray(0) = 0 And bArray(2) = 2 Then
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_42' class='d2nlines'>42: </span>            strExt = ".cur"
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_43' class='d2nlines'>43: </span>        End If
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_44' class='d2nlines'>44: </span>        If bArray(0) = 255 And bArray(1) = 216 Then
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_45' class='d2nlines'>45: </span>            strExt = ".jpg"
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_46' class='d2nlines'>46: </span>        End If
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_47' class='d2nlines'>47: </span>        If bArray(0) = 215 And bArray(1) = 205 Then
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_48' class='d2nlines'>48: </span>            strExt = ".wmf"
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_49' class='d2nlines'>49: </span>        End If
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_50' class='d2nlines'>50: </span>        'RIFF
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_51' class='d2nlines'>51: </span>        If bArray(0) = 82 And bArray(1) = 73 And bArray(2) = 70 And bArray(3) = 70 Then
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_52' class='d2nlines'>52: </span>            strExt = ".wav"
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_53' class='d2nlines'>53: </span>        End If
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_54' class='d2nlines'>54: </span>        If bArray(1) = 80 And bArray(2) = 78 And bArray(3) = 71 Then
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_55' class='d2nlines'>55: </span>            strExt = ".png"
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_56' class='d2nlines'>56: </span>        End If
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_57' class='d2nlines'>57: </span>        If bArray(1) = 66 And bArray(2) = 80 And bArray(3) = 83 Then
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_58' class='d2nlines'>58: </span>            strExt = ".psd"
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_59' class='d2nlines'>59: </span>        End If
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_60' class='d2nlines'>60: </span>        
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_61' class='d2nlines'>61: </span>        If bArray(0) = 0 And bArray(1) = 0 And bArray(2) = 0 Then
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_62' class='d2nlines'>62: </span>            strExt = ".mp3"
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_63' class='d2nlines'>63: </span>        End If
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_64' class='d2nlines'>64: </span>        
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_65' class='d2nlines'>65: </span>        If bArray(0) = 77 And bArray(1) = 84 And bArray(2) = 104 And bArray(3) = 100 Then
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_66' class='d2nlines'>66: </span>            strExt = ".mid"
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_67' class='d2nlines'>67: </span>        End If
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_68' class='d2nlines'>68: </span>        
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_69' class='d2nlines'>69: </span>        If bArray(0) = 126 And bArray(1) = 66 And bArray(2) = 75 And bArray(3) = 0 Then
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_70' class='d2nlines'>70: </span>            strExt = ".psp"
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_71' class='d2nlines'>71: </span>        End If
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_72' class='d2nlines'>72: </span>        
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_73' class='d2nlines'>73: </span>                If bArray(0) = 48 And bArray(1) = 38 And bArray(2) = 178 And bArray(3) = 117 Then
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_74' class='d2nlines'>74: </span>            strExt = ".wma"
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_75' class='d2nlines'>75: </span>        End If
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_76' class='d2nlines'>76: </span>        
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_77' class='d2nlines'>77: </span>    End If
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_78' class='d2nlines'>78: </span>    
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_79' class='d2nlines'>79: </span>    If strExt = "" Then strExt = ".nEXT"
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_80' class='d2nlines'>80: </span>    F2 = FreeFile
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_81' class='d2nlines'>81: </span>    
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_82' class='d2nlines'>82: </span>    Open App.Path & "\Projects\" & sfilename & "\" & strPrefix & strExt For Binary Access Write Lock Write As #F2
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_83' class='d2nlines'>83: </span>        Put #F2, , bArray
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_84' class='d2nlines'>84: </span>    Close #F2
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_85' class='d2nlines'>85: </span>Exit Sub
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_86' class='d2nlines'>86: </span>badZlib:
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_87' class='d2nlines'>87: </span>    MsgBox "Error_GetZlib: Loc: " & Loc(Filenumber) & " " & Err.Description
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_88' class='d2nlines'>88: </span>    End
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_89' class='d2nlines'>89: </span>Exit Sub
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_90' class='d2nlines'>90: </span>End Sub
+<br><span id='d2_nlines_ea5da0af16df0a36271b7b60c32c1b3f_91' class='d2nlines'>91: </span>

@@ -1,0 +1,260 @@
+VBeeb 1.9 Manual
+----------------
+
+1. Introduction
+
+VBeeb emulates a basic BBC Microcomputer system.  This includes dual Disc double sided drives, Cassette interface and ROMs.
+
+VBeeb is made to closely mimic the working of a real BBC Micro at a bit level, this means that software and games produced
+for the original BBC Micro should run faithfully on the emuulator.
+
+
+2. The Keyboard
+
+The layout of the BBC Micro keyboard differs in a number of ways from modern computer keyboards.  
+However, the majority of keys such as the letter and number keys appear in the same place as a modern keyboard.  The following
+differences apply - the modern keyboard layout is given first followed by the BBC Micro layout:
+
+F1 to F10 are F0 to F9
+F12 is Break
+Backslash '\' is Shift Lock
+Right Control is Copy
+Open Square Bracket '[' is @
+Close Square Bracket ']' is [
+Hash '#' is ]
+Insert is \
+Delete is _
+Single Quote ' is :
+Home or Left Arrow is Cursor Left
+End or Up Arrow is Cursor Up
+Page Up or Right Arrow is Cursor Right
+Page Down or Down Arrow is Cursor Down
+
+Other keys as seen on a BBC Micro are as on a modern keyboard.
+
+The status of the Caps Lock, Shift Lock and Cassette Motor LEDs are shown as text on the status bar of VBeeb.
+
+
+3. The File Menu
+
+VBeeb can load and save the following types of files:
+
+Disc images: both single sided (img and ssd) and double sided (dsd),
+Cassette Images: UEF files.
+Archive Format: groups of files with acompanying data (inf).
+Emulator State Snapshots: UEF files.
+
+3.1 Load
+
+Any type of file can be loaded from the 'Load' menu.  The emulator will then mimic the action of either inserting a disc or 
+cassette, re-instating a previously stored state (snapshot) or dumping the contents of the file straight to emulator memory.
+
+It is worth noting that any changes made to discs, cassette or emulator state - within the emualtor - are not written back to 
+the file, unless explicitly 'Saved' at a later point.
+
+The disc drive unit to be loaded (either of two), can be selected from the Disc menu.
+
+When loading Archive files either a disc is created (default) or a cassette can be created (see The Cassette menu).
+
+Another way to load a file is to drag and drop it into the emulator window.  
+
+Note that except for snapshots, loading a file will not automatically run the disc or cassette, this must be done from the
+emulator by issuing the appropriate filing system command (e.g. CHAIN).
+
+When loading a raw memory file, the load address will be requested. 
+
+
+3.2 Save Disc
+
+The current state of the discs can be saved to file.  These can be saved as either:
+Single Sided: the first side of the selected disc is saved as an ssd file.
+Double Sided: both sides of the selected disc are saved as a dsd file. 
+Archive Format: the first side of the selected disc is saved as a set of inf files.
+
+3.3 Save Cassette
+
+The current state of the cassette is saved as a uef file.
+
+3.4 Save Snapshot
+
+The current state of the emulator is saved as a uef file.  This allows you to re-instate a previous session at a later date.
+This is useful for saving game positions for example.
+
+3.5 Save Memory
+
+A dialogue will appear asking for the memory range to be saved. The current contents of that range is dumped in raw format to 
+the file specified.  Note that the range chosen is not kept with the file.
+
+3.6 Send Snapshot
+
+Those with an original BBC Micro and a suitable serial cable, can connect with the computer running the emulator and send a 
+previously saved Snapshot to run natively on the original BBC Micro. In order to do this correctly take the following steps:
+
+a. Connect the two computers with the serial cable.
+b. Turn on the BBC Micro (or reset by pressing Break)
+c. Enter *FX2,1 on the BBC Micro and press Return.  This will set it to receive keyboard input from the serial (RS432) port.
+d. Select 'Send Snapshot' on the emulator and find the snapshot (uef) file to send.
+e. Wait for about 20 seconds for the transfer to take place.
+f. Both the emulator and BBC Micro will then be simultaneously loaded with the Snapshot.
+
+
+4. The Disc Menu
+4.1 Insert Blank
+This will create a blank double sided disc. Any previously loaded disc will be erased.  Note that this is dependent on which
+drive has been selected.
+
+4.2 Eject
+The disc in the currently selected drive can no longer be read and will produce an error in the emulator if read.
+
+4.3 Flip Sides
+This will swap the two sides of the currently selected disc.  This allows different sides of a double sided disc to be saved
+as a single sided disc.
+
+4.4 Select Drive
+The selects which drive unit is in force when performing any disc related menu operation.
+
+
+5. The Cassette Menu
+5.1 Insert and Eject
+These will be availble in a future release of VBeeb.
+
+5.2 Control
+This will display a pop-up showing all the blocks on a tape.  Whilst loading a tape (using CHAIN for example), the tape can 
+be re-wound or forward-wound by clicking on the appropriate block.
+
+5.3 Load Archive As Cassette
+By default files in Archive format are loaded as a disc. By ticking this option the Archive files will be loaded as cassette.
+Archive files may be ordered or unordered.  Ordered files will be loaded in the order given in the .inf files.
+
+
+6. The System Menu
+The system menu lets you change certain aspects of the hardware configuration of the emulator.
+
+6.1 ROM Sockets
+The original BBC Micro motherboard had space for four 8k ROM chips. ROM chips are stored as files with the .rom extension.
+One of the these would be occupied by the language ROM (usually BBC Basic) and one by the Disc Filing System ROM (Acorn). 
+By default on first using the emulator both these ROMs will be automatically loaded.
+
+A new ROM can be inserted by selecting the Load menu on the corresponding socket.
+A socket can be made empty by selecting the Empy menu.
+A socket can be made as a writeable RAM chip (sideways RAM), by ticking the Sideways RAM menu.
+
+Usually an emulator Reboot (see below) should be performed after changing the configuration of ROM sockets.
+
+6.2 Keyboard Links
+On some BBC Micros a set of dip switches on the keyboard PCB allowed for selecting the display mode on boot (and certain aspects
+of the disc drive system).
+Ticking a link box is the equivalent of setting a dip switch to on position.
+
+6.3 Reboot
+This performs a hard-reboot of the emulator.  This is equivalent to switching off and then on a real BBC Micro.
+
+
+7. The Debug Menu
+VBeeb has an inbuilt machine code/assembly language debugger, allowing the step by step execution of 6502 instructions and watching of memory locations.
+
+7.1 Debug Mode
+This menu option will toggle Debug Mode. The title bar will indicate 'DEBUG' when in debug mode. See below for further details.
+
+7.2 Break
+This will bring up the Code Monitor window. The emulator will automatically be put into Debug Mode.
+The Code Monitor window shows machine code instructions on the left and watched registers and memory locations on the right.
+Emulator execution is paused with the next instruction to be executed highlighted in yellow.
+
+7.2.1 Instruction Area
+The scroll bar allows you to scroll to any location in memory. A disassembly of the next twenty instructions is shown. 
+Note that the disassembly is done from the currently selected memory location, and since machine code instructions can be variable in length, 
+the correct machine code instruction may not necessarily be shown towards the top of the list.
+
+For memory locations 8000h to BFFFh inclusive, the contents depend on the currently banked ROM. This can be changed by changing the value of the 
+'ROMSEL' field just below the dissasembly.  This is the hex number representing the currently selected ROM bank, so acceptable values are 0 to 9 and A to F.
+These will correspond to ROM Sockets 1 to 4 in the System menu, where Socket 1=ROMSEL C, Socket 2=ROMSEL D, Socket 3=ROMSEL E, Socket 4=ROMSEL F. 
+A note of caution, changing the value of ROMSEL will actually affect the ROM Select chip.  You should change this back to its original value once 
+you are finished, otherwise there may be undesirable side effects.
+
+There are various ways to control the execution of code whilst the Code Monitor is displayed:
+
+Single Step (Step Into)
+Pressing F8 will execute one instruction.  The highlight is moved onto the next instruction and any watched values updated.
+Any subroutines (JSR) will be stepped into.
+
+Step Over
+Pressing Shift+F8 is the same as for Single Step, except any subroutines (JSR) will not be single stepped, but executed in the background.
+This is useful, if you are not interested in the details of lengthy subroutines.
+Note that under certain circumstances a subroutine may not return as expected, in this case the Code Monitor Window may disappear, with the 
+emulator continuing to run in Debug Mode.
+
+Step Out
+Pressing CTRL+Shift+F8 will execute until the end of a subroutine (RTS).  The next instruction after RTS is shown.
+
+Run
+Pressing F5 or closing the Code Monitor window, will run the emulator in Debug Mode.
+
+Break Points
+A break point can be set by clicking in the left margin of a disassembled instruction.  A star will appear indicating a break point.
+Whilst in Debug Mode, execution is stoppped and the Code Monitor window shown whenever the processor is about to execute that instruction.
+This will happen when either Running, Stepping Out or Stepping Over.
+Note that for banked memory areas (8000h to BFFFh) a break point will only apply to that instruction on the selected bank.
+
+7.2.2 Watch Area
+The Watch Area will show the microprocessor registers and memory locations and their current values.
+Each watched item is configurable:
+Click B to toggle the base of the displayed contents, between binary, octal, decimal and hexadecimal.
+Click T to change the word-size of the displayed contents, between 1, 2, 3 or 4 bytes.
+Click R to toggle Break On Read.  The emulation will stop (in Debug Mode only) when the memory location is read.
+Click W to toggle Break On Write. The emulation will stop (in Debug Mode only) when the memory location is written.
+Click the red X to remove a watched item.
+
+A watched location an be added, in the following ways:
+Click on an instruction in the Instruction Area, press M to add that location to the watch window.  Press R to add the memory location referenced 
+by the instruction.
+
+The contents of the watched memory location (RAM only) can be modified. Click on any digit in the displayed contents and enter either 0 to 9 or A to F
+depending on the number base selected.
+
+
+7.2.3 Debug Mode
+When in Debug Mode, the emulator will respect all break points and any watched locations which are set to break on read or write.
+The emulator may run more slowly in Debug Mode, depending on how many breaks are set. In any case 'DEBUG' is always shown in the emulator title bar.
+Debug Mode can be cancelled (or re-instated) at any time from the Debug menu.
+
+
+8. The VBeeb Menu
+8.1 Preferences
+This will be available in a future release of VBeeb.
+
+8.2 About
+Summary information about VBeeb.
+
+8.3 Exit
+The emulator will be closed down.  
+Any loaded discs or cassettes or emulator state will be lost.  If you wish to keep changes to discs or cassettes or state, then these must be Saved first.
+Any Cassette or Disc options will be remembered.
+The configuration of ROM sockets and Keyboard Links will be remembered.
+
+
+9. Troubleshooting
+9.1 No Sound
+You must have DirectX8 or higher installed, as VBeeb uses DirectSound for sound emulation.
+
+9.2 'Language?' appears on boot.
+By default the Basic language ROM should be loaded the first time the emulator is run.  For various reasons, this may not happen and the ROM fails to load.
+You should load the ROM manually.  Go to the System menu, Rom Sockets, Socket 4, then Load. In the Roms folder select basic2.rom.  You should now Reboot from 
+the System menu.
+
+9.3 No Disc Filing System.
+By default the Disc Filing System ROM should be loaded the first time the emulator is run.  For various reasons, this may not happen and the ROM fails to load.
+You should load the ROM manually.  Go to the System menu, Rom Sockets, Socket 3, then Load. In the Roms folder select dnfs.rom.  You should now Reboot from 
+the System menu.
+
+
+10. Appendix
+10.1
+If you are unfamiliar with how to program or otherwise operate a BBC Micro, the BBC Microcomputer User Guide, 
+BBC Microcomputer Advanced User Guide or BBC Micromputer Disc User Guide are indispensible.
+
+10.2
+When running the emulator for the first time, VBeeb will expand the Teletext font definition files.  This can take up to about a
+minute on some systems and it may appear that the emulator has hung, please be patient.  On subsequent occasions VBeeb should 
+start up instantly.
+

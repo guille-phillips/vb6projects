@@ -1,0 +1,7 @@
+identifier list in a to z _ | | |
+number list in 0 to 9 . a to f | | |
+base and opt + | opt in ?&! | | number opt in dbh | | | |
+ws list in 000 to 032 | min 0 | |
+term or base identifier | |
+level0 list and term opt ' | | del in +-*\&||~<>=: | | |
+

@@ -1,0 +1,151 @@
+ADC (oper),Y	71	2	5*
+ADC (oper,X)	61	2	6
+ADC oper	65	2	3
+ADC oper	6D	3	4
+ADC oper,Y	79	3	4*
+ADC oper,x	75	2	4
+ADC oper,x	7D	3	4*
+AND (oper),Y	31	2	5*
+AND (oper,X)	21	2	6
+AND oper	25	2	3
+AND oper	2D	3	4
+AND oper,Y	39	3	4*
+AND oper,x	35	2	4
+AND oper,x	3D	3	4*
+ASL A	0A	1	2
+ASL oper	06	2	5
+ASL oper	0E	3	6
+ASL oper,x	16	2	6
+ASL oper,x	1E	3	7
+BCC oper	90	2	2**
+BCS oper	B0	2	2**
+BEQ oper	F0	2	2**
+BIT oper	24	2	3
+BIT oper	2C	3	4
+BMI oper	30	2	2**
+BNE oper	D0	2	2**
+BPL oper	10	2	2**
+BRK 	00 	1 	7
+BVC oper	50	2	2**
+BVC oper	70	2	2**
+CLC 	18 	1 	2
+CLD 	D8 	1 	2
+CLI 	58 	1 	2
+CLV 	B8 	1 	2
+CMP (oper),Y	D1	2	5*
+CMP (oper,X)	C1	2	6
+CMP oper	C5	2	3
+CMP oper	CD	3	4
+CMP oper,Y	D9	3	4*
+CMP oper,x	D5	2	4
+CMP oper,x	DD	3	4*
+CPX oper	E4	2	3
+CPX oper	EC	3	4
+CPY #oper	C0	2	2
+CPY oper	C4	2	3
+CPY oper	CC	3	4
+DEC 	CA 	1 	2
+DEC 	88 	1 	2
+DEC oper	C6	2	5
+DEC oper	CE	3	3
+DEC oper,x	D6	2	6
+DEC oper,x	DE	3	7
+EOR (oper),Y	51	2	5*
+EOR (oper,X)	41	2	6
+EOR oper	45	2	3
+EOR oper	4D	3	4
+EOR oper,Y	59	3	4*
+EOR oper,x	55	2	4
+EOR oper,x	5D	3	4*
+INC oper	E6	2	5
+INC oper	EE	3	6
+INC oper,x	F6	2	6
+INC oper,x	FE	3	7
+INX 	E8 	1 	2
+INY 	C8 	1 	2
+JMP (oper) 	6C 	3 	5
+JMP oper	4C	3	3
+JSR oper	20	3	6
+LDA (oper),Y	B1	2	5*
+LDA (oper,X)	A1	2	6
+LDA oper	A5	2	3
+LDA oper	AD	3	4
+LDA oper,Y	B9	3	4*
+LDA oper,x	B5	2	4
+LDA oper,x	BD	3	4*
+LDX oper	A6	2	3
+LDX oper	AE	3	4
+LDX oper,Y	B6	2	4
+LDX oper,Y	BE	3	4*
+LDY oper	A4	2	3
+LDY oper	AC	3	4
+LDY oper,x	B4	2	4
+LDY oper,x	BC	3	4*
+LSR A	4A	1	2
+LSR oper	46	2	5
+LSR oper	4E	3	6
+LSR oper,x	56	2	6
+LSR oper,x	5E	3	7
+NOP 	EA 	1 	2
+ORA (oper),Y	11	2	5*
+ORA (oper,X)	01	2	6
+ORA oper	05	2	3
+ORA oper	0D	3	4
+ORA oper,Y	19	3	4*
+ORA oper,x	15	2	4
+ORA oper,x	1D	3	4*
+PHA 	48 	1 	3
+PHP 	08 	1 	3
+PHP 	28 	1 	4
+PLA 	68 	1 	4
+ROL A	2A	1	2
+ROL oper	26	2	5
+ROL oper	2E	3	6
+ROL oper,x	36	2	6
+ROL oper,x	3E	3	7
+ROR A	6A	1	2
+ROR oper	66	2	5
+ROR oper	6E	3	6
+ROR oper,x	76	2	6
+ROR oper,x	7E	3	7
+RTI 	40 	1 	6
+RTS 	60 	1 	6
+SBC (oper),Y	F1	2	5*
+SBC (oper,X)	E1	2	6
+SBC oper	E5	2	3
+SBC oper	ED	3	4
+SBC oper,Y	F9	3	4*
+SBC oper,x	F5	2	4
+SBC oper,x	FD	3	4*
+SEC 	38 	1 	2
+SED 	F8 	1 	2
+SEI 	78 	1 	2
+STA (oper),Y	91	2	6
+STA (oper,X)	81	2	6
+STA oper	85	2	3
+STA oper	8D	3	4
+STA oper,Y	99	3	5
+STA oper,x	95	2	4
+STA oper,x	9D	3	5
+STX oper	86	2	3
+STX oper	8E	3	4
+STX oper,Y	96	2	4
+STY oper	84	2	3
+STY oper	8C	3	4
+STY oper,x	94	2	4
+TAX 	AA 	1 	2
+TAY 	A8 	1 	2
+TSX 	BA 	1 	2
+TXA 	8A 	1 	2
+TXS 	9A 	1 	2
+TYA 	98 	1 	2
+ADC #oper	69	2	2
+AND #oper	29	2	2
+CMP #oper	C9	2	2
+CPX #oper	E0	2	2
+EOR #oper	49	2	2
+LDA #oper	A9	2	2
+LDX #oper	A2	2	2
+LDY #oper	A0	2	2
+ORA #oper	09	2	2
+SBC #oper	E9	2	2

@@ -1,0 +1,14 @@
+Sector 0
+DISK NAME 8
+FILE 1 ..$ 8
+FILE 2 ..$ L BIT/DIRECTORY CHAR 8
+
+Sector 1
+INFO 8:
+  LOAD ADR 2
+  EXEC ADR 2
+  LENGTH   2
+  LOCKED ATR 'CC' 1
+  SECTOR   1
+
+Sector 2+:Data

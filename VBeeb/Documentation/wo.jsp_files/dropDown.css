@@ -1,0 +1,277 @@
+ul.dropDown {
+margin-top: 1px;
+}
+.dropDown, .dropDown ul {
+white-space: nowrap;
+list-style: none;
+line-height: 1em;
+background: white;
+padding: 0px;
+margin: 0px;
+margin-top: 3px;
+display: block;
+z-index: 100;
+}
+.dropDown select {
+padding: 0px;
+font-size: 0.9em;
+}
+.dropDown a {
+display: block;
+padding: 3px;
+padding-top: 3px;
+p\adding-top: 2px;
+}
+.medium li li {
+width: 10em;
+w\idth: 10.6em !important;
+width: 10em;
+}
+.medium li ul {
+width: 10em;
+}
+.medium li li a {
+w\idth: 9.1em !important;
+width: 9.3em;
+}
+.large li li, .large li ul {
+width: 12.6em;
+}
+ul.large li li a {
+width: 12.6em;
+w\idth: 10.5em;
+}
+.french li li, .french li li a, .french li ul {
+width: 10em;
+w\idth: 12em;
+}
+ul.small li {
+width: 5em;
+w\idth: 3.7em !important;
+color: #333;
+}
+ul.small li a {
+w\idth: 2.7em;
+width: 3.5em !important;
+}
+ul.small {
+width: 2.5em !important;
+}
+.dropDown li a:visited, .dropDown li a:hover, .dropDown li a:active, .dropDown li a:focus, .dropDown li a:link, .dropDown li a {
+text-decoration: none;
+padding-right: 15px;
+margin-top: 0px;
+color: #333;
+}
+.dropDown.noArrow li a:visited, .dropDown.noArrow li a:hover, .dropDown.noArrow li a:active, .dropDown.noArrow li a:focus, .dropDown.noArrow li a:link, .dropDown.noArrow li a {
+padding-right: 8px;
+}
+.dropDown li {
+float: left;
+padding: 0px;
+margin: 0px;
+background-image: url(http://www.wipo.int/ipdl/IPDL-IMAGES/down_arrow_trans.gif);
+background-repeat: no-repeat;
+background-position: top right;
+display: block;
+}
+.dropDown li:hover, .dropDown li.sfhover {
+background-color: #a0a0a0;
+background-image: url(http://www.wipo.int/ipdl/IPDL-IMAGES/down_arrow.gif);
+background-position: top right;
+}
+.dropDown li:hover a,
+.dropDown li:hover a:hover,
+ul.dropDown li.sfhover a:visited, ul.dropDown li.sfhover a:hover, ul.dropDown li.sfhover a:link, ul.dropDown li.sfhover a:focus, ul.dropDown li.sfhover a:active, ul.dropDown li.sfhover a {
+color: #fff;
+}
+.dropDown li li a, .dropDown li li a:hover,
+.dropDown li li:hover a, .dropDown li li:hover a:hover,
+.dropDown li:hover li a, .dropDown li:hover li a:hover,
+.dropDown li li.sfhover a, .dropDown li li.sfhover a:hover, .dropDown li li.sfhover a:visited, .dropDown li li.sfhover a:link,
+.dropDown li.sfhover li a, .dropDown li.sfhover li a:hover, .dropDown li.sfhover li a:visited, .dropDown li.sfhover li a:link,
+.dropDown li.sfhover li.sfhover a, .dropDown li.sfhover li.sfhover a:hover, .dropDown li.sfhover li.sfhover a:visited, .dropDown li.sfhover li.sfhover a:link {
+color: #333;
+}
+.dropDown.noArrow li, .dropDown.noArrow li:hover, .dropDown.noArrow li.sfhover {
+background-image: none;
+}
+.dropDown li ul, ul.dropDown li ul {
+position: absolute;
+left: -999em;
+height: auto;
+font-weight: normal;
+padding-top: 0px;
+border: none;
+margin: -1px 0 0 10px;
+}
+.dropDown li {
+border: none;
+}
+.dropDown li li {
+border: 1px solid black;
+margin: -2px 0 0 0;
+background-image: none;
+padding-left: 0;
+padding-right: 0;
+background: #fff;
+}
+.dropDown li li.first {
+margin-top: 0;
+}
+.dropDown li ul ul {
+margin: -1.45em 0 0 10.6em !important;
+margin: -1.55em 0 0 10.8em;
+padding: 0;
+background: none;
+}
+.dropDown li:hover ul ul, .dropDown li:hover ul ul ul, .dropDown li.sfhover ul ul, .dropDown li.sfhover ul ul ul {
+left: -999em;
+}
+.dropDown li:hover ul, .dropDown li li:hover ul, .dropDown li li li:hover ul, .dropDown li.sfhover ul, .dropDown li li.sfhover ul, .dropDown li li li.sfhover ul {
+left: auto;   
+}
+.dropDown.under li:hover ul, .dropDown.under li li:hover ul, .dropDown.under li li li:hover ul, .dropDown.under li.sfhover ul, .dropDown.under li li li.sfhover ul {
+left: auto;
+margin-left: -100px;
+}
+.dropDown li ul a:hover, .dropDown li ul a:visited, .dropDown li ul a:focus, .dropDown li ul a:active, .dropDown li ul a {
+text-decoration: none;
+}
+.dropDown li:hover ul li:hover, .dropDown li.sfhover ul li.sfhover {
+background: #cce6ff;
+}
+ul.popUp {
+float: left;
+}
+.popUp, .popUp ul {
+clear: none;
+border: none;
+}
+.popUp li {
+border: none;
+margin: 0;
+font-weight: normal;
+white-space: nowrap;
+display: inline;
+float: left;
+background: none;
+}
+.popUp li a {
+padding-top: 3px !important;
+padding-top: 5px;
+}
+.popUp li li {
+border: solid 1px #333;
+white-space: normal;
+padding: 6px;
+line-height: 1.3em;
+background-color: #eee;
+display: block;
+}
+.popUp li:hover a,
+.popUp li:hover a:hover,
+ul.popUp li.sfhover a:visited, ul.popUp li.sfhover a:hover, ul.popUp li.sfhover a:link, ul.popUp li.sfhover a:focus, ul.popUp li.sfhover a:active, ul.popUp li.sfhover a {
+color: #333;
+}
+.popUp li a:hover {
+background: #cce6ff;
+}
+.popUp li:hover, .popUp li.sfhover {
+background-color: #cce6ff;
+background-image: none;
+}
+.popUp li ul {
+margin-top: 0px;
+border: none;
+}
+.popUp li:hover ul li:hover, .popUp li.sfhover ul li.sfhover {
+background: #eee;
+}
+.dropLeft ul {
+float: right;
+}
+.dropLeft li {
+float: right;
+margin: 0;
+padding: 0;
+padding-top: 0px;
+}
+.dropLeft li a {
+float: right;
+padding: 0;
+padding-top: 0px;
+padding-bottom: 5px;
+}
+.dropLeft li li {
+float: right;
+display: none;
+margin-top: 0;
+z-index: 12000;
+}
+.dropLeft li ul {
+float: right;
+}
+.dropLeft li:hover li, .dropLeft li.sfhover li {
+float: right;
+display: block;
+}
+.dropLeft li:hover ul, .dropLeft li li:hover ul, .dropLeft li li li:hover ul, .dropLeft li.sfhover ul, .dropLeft li li.sfhover ul, .dropLeft li li li.sfhover ul {
+float: right;
+display: block;  
+}
+.daddy {
+background-image: url(http://www.wipo.int/ipdl/IPDL-IMAGES/icon_arrow_right.gif);
+background-position: top right;
+background-repeat: no-repeat;
+padding: 0;
+}
+.dropDown li a input {
+padding: 0px;
+margin: 0px;
+margin-right: 3px;
+padding-top: 0px;
+height: 12px;
+width: 12px;
+}
+.dropDown li a input[type="checkbox"] {
+margin-top: -0.2em;
+}
+.dropDown li a label.alwaysOn {
+font-weight: bold;
+}
+.dropDown li a.printable {
+background-image: url(http://www.wipo.int/ipdl/IPDL-IMAGES/printer_icon.gif);
+background-position: center right;
+background-repeat: no-repeat;
+}
+.dropDown li a input.right {
+float: left;
+f\loat: none;
+margin-left: 8.5em;
+m\argin-left: 8px;
+background: red;
+margin-right: 0;
+}
+.wide li li {
+width: 250px !important;
+w\idth: 250px !important;
+white-space: normal !important;
+}
+
+.wide li li p {
+width: 250px;
+}
+.popUp div.bullet {
+padding-bottom: .7em;
+padding-top: .4em;
+}
+.popUp div.bullet p {
+	background-image: url(http://www.wipo.int/export/sites/www/shared/images/icon/icon_arrow_right.gif);
+	background-position: left top;
+	background-repeat: no-repeat;
+	padding-left: 12px;
+padding-bottom: 2px;
+margin-top: 1px;
+margin-bottom: 1px;
+}

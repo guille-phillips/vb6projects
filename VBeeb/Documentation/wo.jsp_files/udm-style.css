@@ -1,0 +1,387 @@
+.udm ul {
+	margin:0;
+	padding:0;
+	list-style-type:none;
+	overflow: visible !important;
+	}
+.udm {
+	position:absolute;
+	left:0;
+	top:0;
+	z-index:1000;
+	width:7.5em;
+	cursor:default !important;
+	border:none;
+	text-align:left;
+	}
+.udm {
+	float:none;
+	width: 750px;
+	}
+@media screen,projection {
+	.udm {
+	float:left;
+	}}
+.udm {
+	margin-top:68px;
+	}
+.udm>li:first-child {
+	margin-left:180px;
+	}
+@media Screen,Projection {
+	.udm>li:first-child {
+	margin-left:0;
+	margin-right:0;
+	}}
+.udm li {
+	left:140px;
+	}
+@media screen,projection {
+	.udm li {
+	position:relative;
+	}}
+.udm ul li {
+	left:0;
+	}
+:root ul[class^="udm"] li {
+	left:0;
+	position:static;
+	}
+@media Screen,Projection {
+	:root ul[class^="udm"] li {
+	left:140px;
+	position:relative;
+	}}
+@media Screen,Projection {
+	.udm/**/[class="udm"]:not([class="xxx"]) ul li {
+	position:relative;
+	left:0;
+	}}
+.udm li {
+	display:block;
+	width:auto;
+	float:left;
+	}
+.udm li a {
+	position:static;
+	display:block;
+	float:left;
+	white-space:nowrap;
+	}
+@media screen,projection {
+	.udm l\i a {
+	position:relative;
+	float:none;
+	}}
+ul[class^="udm"] li a {
+	position:relative;
+	float:none;
+	}
+@media screen,projection {
+	* html .udm li a {
+	position:relative;
+	float:none;
+	}}
+.udm ul li a {
+	position:relative;
+	float:none !important;
+	white-space:normal;
+	}
+.udm li a {
+	margin-left:-0px;
+	}
+@media Screen,Projection {
+	.udm li {
+	margin-left:-0px !important;
+	}}
+@media Screen,Projection {
+	.udm li a {
+	margin-left:0;
+	}}
+ul[class^="udm"] li:not(:first-child) {
+	margin-left:-0px;
+	}
+.udm ul li {
+	margin-left:0 !important;
+	}
+ul[class^="udm"]:not([class="xxx"]) ul li {
+	margin-left:0 !important;
+	}
+.udm ul a {
+	margin:0;
+	}
+.udm ul li {
+	margin-bottom:0px !important;
+	margin-top: 0px !important;
+	margin-top: 2px;
+	}
+.udm ul li:first-child {
+	margin-top:0px;
+	}
+.udm ul a {
+	margin-top:-2px !important;
+	margin-right:0px !important;
+	margin-bottom:0px;
+	margin-left:0px !important;
+	padding-bottom: -2px;
+	}
+.udm ul {
+	background-image:none;
+	background-color:#ffffff;
+	cursor:default !important;
+	width:220px;
+	height:auto;
+	border-width:1px;
+	border-color:#003366 #003366 #003366 #003366;
+	border-style: none solid solid solid;
+	position:absolute;
+	z-index:20100;
+	padding:0px;
+	}
+.udm ul li {
+	cursor:default !important;
+	position:static;
+	float:none;
+	}
+.udm ul {
+	display:none;
+	visibility:hidden;
+	}
+html/**/[xmlns] .udm u\l {
+	display:block;
+	visibility:visible;
+	height:0;
+	overflow:scroll;
+	left:-10000px;
+	}
+@media screen,projection {
+	* html .udm ul  {
+	display:block;
+	visibility:visible;
+	height:0;
+	overflow:scroll;
+	top:-10000px;
+	}}
+ul.udm/**/[class^="udm"] u\l {
+	display:block;
+	visibility:visible;
+	height:0;
+	overflow:visible;
+	left:-1000em;
+	}
+.udm .udmS {
+	margin-left:2px;
+	margin-top:2px;
+	}
+.udm .udmS {
+	background-image:none;
+	background-color:#bcbcbc;
+	cursor:default !important;
+	position:absolute;
+	z-index:20050;
+	width:auto;
+	height:auto;
+	left:0px;
+	top:0px;
+	display:none;
+	filter:alpha(opacity=75);
+	}
+.udm a,.udm a:link,.udm a.nohref {
+	background-image:none;
+	cursor:pointer !important;
+	z-index:1000;
+	text-align:left;
+	border-style:solid;
+	padding-right:15px;
+	padding-top:-5px !important;
+	padding-bottom:-5px !important;
+	text-decoration:none;
+	color:#ffffff;
+	border-width:0px;
+	font-style:normal;
+	font-family:arial,sans-serif;
+	font-weight:bold !important;
+	}
+.udm a,.udm a.nohref {
+	font-size:10px;
+	}
+.udm li a,.udm li a:link,.udm li a.nohref,.udm li a:visited {
+	letter-spacing:0px !important;
+	}
+.udm li a:visited {
+	background-image:none;
+	border-width:0px;
+	color:#ffffff;
+	font-style:normal;
+	border-style:none;
+	}
+.udm li a.udmR,.udm li a.udmY,.udm li a.udmR:visited,.udm li a.udmY:visited,.udm li a:hover,.udm li a:focus,.udm li a.nohref:hover,.udm li a.nohref:focus {
+	font-style:normal;
+	background-image:none;
+	background-color:#a0a0a0;
+	text-decoration:none;
+	color:#ffffff;
+	border-style:none;
+	border-width:0px;
+	}
+* html .udm li a:active {
+	font-style:normal;
+	background-image:none;
+	background-color:#a0a0a0;
+	text-decoration:none;
+	color:#ffffff;
+	border-style:none;
+	border-width:0px;
+	}
+.udm ul a,.udm ul a:link,.udm ul a.nohref {
+	background-image:none;
+	background-color:#ffffff;
+	text-align:left;
+	border-width:1px;
+	border-style:solid none none none;
+	border-color:#003366 #ffffff #003366 #ffffff;
+	padding-left:5px;
+	padding-right:5px;
+	padding-top:1px !important;
+	padding-bottom:1px !important;
+	text-decoration:none;
+	color:#003366;
+	width: 210px;
+	overflow: hidden !important;
+	font-style:normal;
+	font-size:10px;
+	font-family:arial,sans-serif;
+	font-weight:normal !important;
+	}
+.udm ul li a,.udm ul li a:link,.udm ul li a.nohref,.udm ul li a:visited {
+	margin-top: 0px !important;
+		 margin-top: 0px;
+		}
+.udm ul li a:visited,* html .udm ul li a:visited {
+	background-image:none;
+	background-color:#ffffff;
+	color:#003366;
+	font-style:normal;
+	border-width:1px;
+	border-style:solid none none none;
+	border-color:#003366;
+	}
+.udm ul li a.udmR,.udm ul li a.udmY,.udm ul li a.udmR:visited,.udm ul li a.udmY:visited,.udm ul li a:hover,.udm ul li a:focus,.udm ul li a.nohref:hover,.udm ul li a.nohref:focus,.udm ul li a:visited:hover {
+	font-style:normal;
+	background-image:none;
+	background-color:#cce6ff;
+	text-decoration:none;
+	color:#990000;
+	border-color:#003366 #ffffff #003366 #ffffff;
+	border-style:solid none none none;
+	border-width:1px;
+	}
+* html .udm ul li a:active {
+	font-style:normal;
+	background-image:none;
+	background-color:#cce6ff;
+	text-decoration:none;
+	color:#990000;
+	border-color:#003366 #ffffff #003366 #ffffff;
+	border-style:solid none none none;
+	border-width:1px;
+	}
+.udm a.nohref,.udm ul a.nohref {
+	cursor:default !important;
+	}
+.udm h3,.udm h4,.udm h5,.udm h6 {
+	display:block;
+	background:none;
+	margin:0;
+	padding:0;
+	border:none;
+	font-size:1em;
+	font-weight:normal;
+	text-decoration:none;
+	}
+.udm h3,.udm h4,.udm h5,.udm h6 {
+	display:inline;
+	}
+.udm h\3,.udm h\4,.udm h\5,.udm h\6 {
+	display:block;
+	}
+ul[class^="udm"] h3,ul[class^="udm"] h4,ul[class^="udm"] h5,ul[class^="udm"] h6 {
+	display:block;
+	}
+* html .udm h3,* html .udm h4,* html .udm h5,* html .udm h6 {
+	display:block;
+	}
+* html .udm h3,* html .udm h4,* html .udm h5,* html .udm h6 {
+	width:expression("auto",this.runtimeStyle.width=this.parentNode.offsetWidth);
+	width/**/:auto;
+	}
+* html .udm ul h3,* html .udm ul h4,* html .udm ul h5,* html .udm ul h6 {
+	width:expression("auto",this.runtimeStyle.width=this.parentNode.currentStyle.width);
+	width/**/:auto;
+	}
+@media screen,projection {
+	* html .udm li {
+	display:inline;
+	}}
+@media screen,projection {
+	* html .udm li,* html .udm ul li {
+	display/**/:block;
+	float/**/:left;
+	}}
+@media screen,projection {
+	* html .udm li,* html .udm ul li {
+	clear:none;
+	}}
+ul[class$="udm"].udm li,ul[class$="udm"].udm ul li {
+	display:block;
+	float:left;
+	}
+ul[class$="udm"].udm:not([class="xxx"]) li {
+	float:left;
+	}
+ul[class$="udm"].udm:not([class="xxx"]) ul li {
+	float:none;
+	}
+@media all and (min-width:0px) {
+	ul[class$="udm"].udm li {
+	float:left;
+	}}
+@media all and (min-width:0px) {
+	ul[class$="udm"].udm ul li {
+	float:none;
+	}}
+select {
+	visibility:visible;
+	}
+.udm .udmC {
+	position:absolute;
+	left:0;
+	top:0;
+	z-index:20020;
+	width:auto;
+	height:auto;
+	filter:alpha(opacity=0);
+	}
+A.udmHeader {
+	padding-left: 40px;
+	overflow: hidden;	
+	height: 15px !important;
+	width: auto !important;
+
+}
+SPAN.udmHeader {
+	position: relative;
+	left: -35px;
+	top: -5px;
+}
+LI.udmHeader {
+width: auto !important;
+width: 100px;
+min-width: 100px;
+}
+a.subMenuLink {
+	background-image: url(/export/sites/intranet/shared/images/icon/right-green.gif) !important;
+	background-position: right top;
+	background-repeat: no-repeat;
+	padding-right: 10px;
+}
